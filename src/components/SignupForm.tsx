@@ -8,14 +8,20 @@ interface user_info {
     passwordConfirmation: string
 }
 
-export class SignupForm extends React.Component<{}, user_info> {
+interface ErrorsInterface extends user_info {
+    errors: Array<{ param: string, msg: string, value: string }>
+}
+
+
+export class SignupForm extends React.Component<{}, ErrorsInterface> {
     constructor(props: any) {
         super(props)
         this.state = {
             username: "",
             email: "",
             password: "",
-            passwordConfirmation: ""
+            passwordConfirmation: "",
+            errors: [{ param: "", msg: "", value: "" }]
         }
         this.onChange = this.onChange.bind(this)
         this.onSubmit = this.onSubmit.bind(this)
@@ -24,8 +30,11 @@ export class SignupForm extends React.Component<{}, user_info> {
     onSubmit(e: React.FormEvent<EventTarget>) {
         e.preventDefault()
         axios.post("/api/users", this.state)
-            .then(function (response) {
+            .then((response) => {
                 console.log(response)
+                this.setState({
+                    errors: response.data.errors
+                })
             });
         console.log(this.state)
     }
@@ -91,6 +100,14 @@ export class SignupForm extends React.Component<{}, user_info> {
                     <button className="btn btn-primary btn-md">
                         Signup
                 </button>
+                    {(this.state.errors[0].param != "") ? (
+                        <ul>
+                            {(this.state.errors).map(function (d, idx) {
+                                let li_value = "Field: ".concat(d.param, "Remark: ", d.msg)
+                                return (<li key={idx}>{li_value}</li>)
+                            })}
+
+                        </ul>) : ""}
                 </div>
             </form>
         )
