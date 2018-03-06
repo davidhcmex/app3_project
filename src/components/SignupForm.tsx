@@ -1,4 +1,5 @@
 import * as React from "react";
+import axios from "axios"
 
 interface user_info {
     username: string,
@@ -22,11 +23,15 @@ export class SignupForm extends React.Component<{}, user_info> {
 
     onSubmit(e: React.FormEvent<EventTarget>) {
         e.preventDefault()
+        axios.post("/api/users", this.state)
+            .then(function (response) {
+                console.log(response)
+            });
         console.log(this.state)
     }
 
     onChange(e: React.FormEvent<EventTarget>) {
-    
+
         this.setState(
             {
                 username: this["uname"].value,
@@ -40,7 +45,7 @@ export class SignupForm extends React.Component<{}, user_info> {
     render() {
         return (
             <form onSubmit={this.onSubmit}>
-                <h1>Join Our Community</h1>
+                <h1>Chat User Registration</h1>
                 <div className="form-group">
                     <label className="control-label">Username</label>
                     <input value={this.state.username}
