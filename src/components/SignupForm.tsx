@@ -13,7 +13,7 @@ interface ErrorsInterface extends user_info {
 }
 
 
-export class SignupForm extends React.Component<{}, ErrorsInterface> {
+export class SignupForm extends React.Component<{userSignupRequest:any}, ErrorsInterface> {
     constructor(props: any) {
         super(props)
         this.state = {
@@ -36,6 +36,16 @@ export class SignupForm extends React.Component<{}, ErrorsInterface> {
                     errors: response.data.errors
                 })
             });
+        // console.log(this.props)  UNDEFINED
+        //Hay que continuar AVANZANDO... esto de ligar con Redux QUEDA PENDIENTE,
+        // VER REGISTER.TSX
+          //  this.props.userSignupRequest(this.state)
+            // this.props.userSignupRequest(this.state).then(
+            //     () => {
+            //       console.log("success")
+            //     },
+            //     (err:any) => this.setState({ errors: err.response.data.errors })
+            //   );
         console.log(this.state)
     }
 
@@ -113,3 +123,5 @@ export class SignupForm extends React.Component<{}, ErrorsInterface> {
         )
     }
 }
+
+
