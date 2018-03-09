@@ -9,6 +9,7 @@ var router = express.Router();
 var User = require("../models/users");
 //const bcrypt = require("bcryptjs");
 var bcrypt = require("bcryptjs");
+//import * as passport from "passport";
 //express validator middleware
 router.use(expressValidator({
     errorFormatter: function (param, msg, value) {
@@ -36,7 +37,7 @@ router.post("/", function (req, res) {
     if (errors) {
         console.log(errors);
         // res.status(400).json({errors:errors})
-        res.send({ errors: errors });
+        res.send({ errors: errors, isValid: false });
     }
     else {
         var newUser_1 = new User({
@@ -44,6 +45,7 @@ router.post("/", function (req, res) {
             email: email,
             password: password
         });
+        res.send({ isValid: true });
         bcrypt.genSalt(10, function (err, salt) {
             bcrypt.hash(newUser_1.password, salt, function (err, hash) {
                 if (err) {
@@ -62,6 +64,27 @@ router.post("/", function (req, res) {
                 });
             });
         });
+    }
+});
+router.post("/login", function (req, res, next) {
+    // const username = req.body.username;
+    // const password = req.body.password;
+    req.checkBody("username", "Name is required").notEmpty();
+    req.checkBody("password", "Password is required").notEmpty();
+    var errors = req.validationErrors();
+    if (errors) {
+        console.log(errors);
+        // res.status(400).json({errors:errors})
+        res.send({ errors: errors, isValid: false });
+    }
+    else {
+        res.send({ isValid: true });
+        // passport.authenticate("local", {
+        //     successRedirect: "/",
+        //     failureRedirect: "/users/login",
+        //     failureFlash: true
+        // }
+        // )(req, res, next)
     }
 });
 module.exports = router;
