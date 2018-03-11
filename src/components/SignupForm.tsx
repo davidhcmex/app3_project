@@ -6,7 +6,8 @@ interface user_info {
     email: string,
     password: string,
     passwordConfirmation: string
-    isValid:boolean
+    isValid: boolean,
+    token: ""
 }
 
 interface ErrorsInterface extends user_info {
@@ -14,7 +15,7 @@ interface ErrorsInterface extends user_info {
 }
 
 
-export class SignupForm extends React.Component<{userSignupRequest:any}, ErrorsInterface> {
+export class SignupForm extends React.Component<{ userSignupRequest: any }, ErrorsInterface> {
     constructor(props: any) {
         super(props)
         this.state = {
@@ -23,7 +24,8 @@ export class SignupForm extends React.Component<{userSignupRequest:any}, ErrorsI
             password: "",
             passwordConfirmation: "",
             errors: [{ param: "", msg: "", value: "" }],
-            isValid:true
+            isValid: true,
+            token: ""
         }
         this.onChange = this.onChange.bind(this)
         this.onSubmit = this.onSubmit.bind(this)
@@ -33,23 +35,20 @@ export class SignupForm extends React.Component<{userSignupRequest:any}, ErrorsI
         e.preventDefault()
         axios.post("/api/users", this.state)
             .then((response) => {
-                console.log(response)
-                this.setState({
-                    errors: response.data.errors,
-                    isValid: response.data.isValid
-                
-                })
+                console.log("ACAAA");
+                console.log(response);
+               
             });
         // console.log(this.props)  UNDEFINED
         //Hay que continuar AVANZANDO... esto de ligar con Redux QUEDA PENDIENTE,
         // VER REGISTER.TSX
-          //  this.props.userSignupRequest(this.state)
-            // this.props.userSignupRequest(this.state).then(
-            //     () => {
-            //       console.log("success")
-            //     },
-            //     (err:any) => this.setState({ errors: err.response.data.errors })
-            //   );
+        //  this.props.userSignupRequest(this.state)
+        // this.props.userSignupRequest(this.state).then(
+        //     () => {
+        //       console.log("success")
+        //     },
+        //     (err:any) => this.setState({ errors: err.response.data.errors })
+        //   );
         console.log(this.state)
     }
 
@@ -114,14 +113,14 @@ export class SignupForm extends React.Component<{userSignupRequest:any}, ErrorsI
                     <button className="btn btn-primary btn-md">
                         Signup
                 </button>
-                {! (this.state.isValid) ? (
+                    {!(this.state.isValid) ? (
                         <ul>
                             {(this.state.errors).map(function (d, idx) {
                                 let li_value = "Field: ".concat(d.param, "Remark: ", d.msg)
                                 return (<li key={idx}>{li_value}</li>)
                             })}
 
-                        </ul>) : ""}
+                        </ul>) : this.state.token}
                 </div>
             </form>
         )

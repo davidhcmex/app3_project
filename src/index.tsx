@@ -6,6 +6,7 @@ import './index.css';
 import { Provider } from "react-redux"
 import thunk from "redux-thunk"
 import { createStore, applyMiddleware } from "redux"
+import setAuthorizationToken from "./utils/setAuthorizationToken"
 
 // const createStore = redux.createStore;
 
@@ -40,10 +41,15 @@ import { createStore, applyMiddleware } from "redux"
 
 //createStore(rootReducer,initialState,Applymiddleware -thunk-)
 
+
+
 const store = createStore(
 (state = {}/*we here have no action */) => state,
   applyMiddleware(thunk)
 )
+
+setAuthorizationToken(localStorage.token)
+
 ReactDOM.render(
   <Provider store={store}>
     <App />

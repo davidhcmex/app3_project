@@ -1,5 +1,7 @@
 import * as React from 'react';
+import './custom.css';
 import './bootstrap.min.css';
+
 //import {Vehicle} from './Vehicle';
 
 import { Route, BrowserRouter } from "react-router-dom";

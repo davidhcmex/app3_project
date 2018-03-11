@@ -1,11 +1,20 @@
 import * as React from "react";
-import axios from "axios"
+//import axios from "axios"
+import { connect } from "react-redux"
+import { login } from "./Actions/authActions"
+import setAuthorizationToken from '../utils/setAuthorizationToken';
+import * as jwt from "jsonwebtoken";
+
+
+//Here we will use redux to use  an action that will 
+//perform the post method (in register we did not use it)
 
 interface StateInterface {
     username: string,
     password: string,
-    isValid:boolean
-    
+    isValid: boolean,
+    token:string
+
 }
 
 interface ErrorsInterface extends StateInterface {
@@ -13,16 +22,18 @@ interface ErrorsInterface extends StateInterface {
 }
 
 
+class LoginForm extends React.Component<{ login: any, history: any }, ErrorsInterface> {
 
-export default class LoginForm extends React.Component<{}, ErrorsInterface> {
+    //class LoginForm extends React.Component<RouteComponentProps<{id:string}>, ErrorsInterface> {
     constructor(props: any) {
         super(props)
         this.state = {
             username: "",
             password: "",
             errors: [{ param: "", msg: "", value: "" }],
-            isValid: true
-           
+            isValid: true,
+            token:""
+
 
         }
         this.onChange = this.onChange.bind(this)
@@ -31,15 +42,45 @@ export default class LoginForm extends React.Component<{}, ErrorsInterface> {
 
     onSubmit(e: React.FormEvent<EventTarget>) {
         e.preventDefault()
+        this.props.login(this.state).then(
 
-        axios.post("/api/users/login", this.state)
-            .then((response) => {
-                console.log(response)
-                this.setState({
-                    errors: response.data.errors,
-                    isValid: response.data.isValid
-                })
-            });
+            (response: any) => {
+
+
+                if (response.data.errors)
+                    this.setState({
+                        errors: response.data.errors,
+                        isValid: false
+                    })
+                else {
+                    // console.log(response.data.token)
+                    // this.setState({
+                    //     token: response.data.token,
+                    //     isValid: true
+                    // })
+                    const token = response.data.token;
+                    localStorage.setItem("jwtToken", token)
+                    setAuthorizationToken(token)
+                    console.log(jwt.decode(token))
+                    this.props.history.push("/chat")
+                    
+                
+                }
+
+
+
+            }
+        )
+
+        //We will substitue this with an action (Although it is working quite fine )
+        // axios.post("/api/users/login", this.state)
+        //     .then((response) => {
+        //         console.log(response)
+        //         this.setState({
+        //             errors: response.data.errors,
+        //             isValid: response.data.isValid
+        //         })
+        //     });
 
         console.log(this.state)
     }
@@ -50,7 +91,7 @@ export default class LoginForm extends React.Component<{}, ErrorsInterface> {
             {
                 username: this["uname"].value,
                 password: this["passwd"].value,
-                isValid:false
+
 
             })
     }
@@ -75,7 +116,7 @@ export default class LoginForm extends React.Component<{}, ErrorsInterface> {
                 <div className="form-group">
                     <label className="control-label">Password</label>
                     <input value={this.state.password}
-                        type="text" name="password"
+                        type="password" name="password"
                         ref={node => this["passwd"] = node}
                         onChange={this.onChange}
                         className="form-control" />
@@ -86,10 +127,10 @@ export default class LoginForm extends React.Component<{}, ErrorsInterface> {
                     <button className="btn btn-primary btn-md">
                         Login
                 </button>
-                    {! (this.state.isValid) ? (
+                    {!(this.state.isValid) ? (
                         <ul>
                             {(this.state.errors).map(function (d, idx) {
-                                let li_value = "Field: ".concat(d.param, "Remark: ", d.msg)
+                                let li_value = "Field: ".concat(d.param,  "Remark: ", d.msg)
                                 return (<li key={idx}>{li_value}</li>)
                             })}
 
@@ -99,6 +140,13 @@ export default class LoginForm extends React.Component<{}, ErrorsInterface> {
         )
     }
 }
+
+
+
+//dispatch to props as second parameter
+export default connect<{}, {}, { history: any }>(null, { login })(LoginForm)
+
+
 
 
 

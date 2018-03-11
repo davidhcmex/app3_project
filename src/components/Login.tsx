@@ -1,12 +1,16 @@
 import * as React from "react";
 import LoginForm from './LoginForm';
+import { RouteComponentProps } from "react-router-dom";
 
-export class Login extends React.Component {
+
+export class Login extends React.Component<RouteComponentProps<{}>,{}> {
   render() {
+      console.log(this.props)
     return (
       <div className="row">
         <div className="col-md-4 col-md-offset-4">
-          <LoginForm />
+          <LoginForm history={this.props.history} />
+       
         </div>
       </div>
     );

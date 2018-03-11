@@ -9,6 +9,8 @@ var router = express.Router();
 var User = require("../models/users");
 //const bcrypt = require("bcryptjs");
 var bcrypt = require("bcryptjs");
+var jwt = require("jsonwebtoken");
+var jwtconfig_1 = require("../config/jwtconfig");
 //import * as passport from "passport";
 //express validator middleware
 router.use(expressValidator({
@@ -69,22 +71,56 @@ router.post("/", function (req, res) {
 router.post("/login", function (req, res, next) {
     // const username = req.body.username;
     // const password = req.body.password;
+    var _a = req.body, username = _a.username, password = _a.password;
     req.checkBody("username", "Name is required").notEmpty();
     req.checkBody("password", "Password is required").notEmpty();
     var errors = req.validationErrors();
     if (errors) {
+        console.log("errores");
         console.log(errors);
-        // res.status(400).json({errors:errors})
         res.send({ errors: errors, isValid: false });
+        return;
     }
     else {
-        res.send({ isValid: true });
-        // passport.authenticate("local", {
-        //     successRedirect: "/",
-        //     failureRedirect: "/users/login",
-        //     failureFlash: true
-        // }
-        // )(req, res, next)
+        var query = { username: username };
+        console.log(query);
+        var errors_1 = {};
+        User.findOne(query, function (err, user) {
+            if (err)
+                throw err;
+            if (!user) {
+                console.log("No User With that name");
+                errors_1 = [{ param: "User Name", msg: "No user with that name" }];
+                res.send({ errors: errors_1, isValid: false });
+            }
+            else {
+                //match password
+                console.log(user);
+                bcrypt.compare(password, user.password, function (err, isMatch) {
+                    if (isMatch) {
+                        console.log("Password Match");
+                        var token = jwt.sign({
+                            id: user._id,
+                            username: username
+                        }, jwtconfig_1.default.jwtSecret);
+                        //   res.json({token})
+                        console.log(token);
+                        res.send({ token: token, isValid: true });
+                    }
+                    else {
+                        console.log("No PAssword Match");
+                        errors_1 = [{ param: "Password", msg: "Passwords do not match" }];
+                        res.send({ errors: errors_1, isValid: false });
+                    }
+                });
+            }
+        });
     }
 });
+// passport.authenticate("local", {
+//     successRedirect: "/",
+//     failureRedirect: "/users/login",
+//     failureFlash: true
+// }
+// )(req, res, next)
 module.exports = router;
