@@ -83,7 +83,7 @@ router.post("/login", function (req, res, next) {
     // const password = req.body.password;
 
     const { username, password } = req.body
-   
+
 
     req.checkBody("username", "Name is required").notEmpty();
     req.checkBody("password", "Password is required").notEmpty();
@@ -93,12 +93,12 @@ router.post("/login", function (req, res, next) {
     if (errors) {
         console.log("errores")
         console.log(errors)
-        
+
         res.send({ errors: errors, isValid: false })
         return
     }
     else {
-    
+
         let query = { username: username };
         console.log(query)
         let errors = {}
@@ -106,8 +106,8 @@ router.post("/login", function (req, res, next) {
             if (err) throw err;
             if (!user) {
                 console.log("No User With that name")
-                errors = [{param:"User Name", msg: "No user with that name" }]
-            
+                errors = [{ param: "User Name", msg: "No user with that name" }]
+
                 res.send({ errors: errors, isValid: false })
 
             }
@@ -116,20 +116,24 @@ router.post("/login", function (req, res, next) {
                 console.log(user)
                 bcrypt.compare(password, user.password, function (err, isMatch) {
                     if (isMatch) {
-                        console.log("Password Match")
+                        console.log("Password Matchoo")
                         const token = jwt.sign({
                             id: user._id,
-                            username:username
+                            username: username
                         }, config.jwtSecret)
-                     //   res.json({token})
+                        //   res.json({token})
 
-                     // console.log(token)
-                        res.send({token: token, isValid: true })
+                        
+                        //res.send({ token: token, isValid: true })
+
+                        res.cookie ("auth", token, { httpOnly: true });
+                        res.send({ isValid: true });
+
                     }
                     else {
                         console.log("No Password Match")
-                        errors =  [{param:"Password", msg: "Passwords do not match"}] 
-                   
+                        errors = [{ param: "Password", msg: "Passwords do not match" }]
+
                         res.send({ errors: errors, isValid: false })
                     }
                 })

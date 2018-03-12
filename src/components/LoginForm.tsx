@@ -58,11 +58,13 @@ class LoginForm extends React.Component<{ login: any, history: any }, ErrorsInte
                     //     token: response.data.token,
                     //     isValid: true
                     // })
+                    
                     const token = response.data.token;
                     localStorage.setItem("jwtToken", token)
                     setAuthorizationToken(token)
                     console.log(jwt.decode(token))
-                    this.props.history.push("/chat")
+                    this.setState({errors: [{ param: "Ok", msg: ".. Redirecting to login page", value: "" }], isValid:false})
+                    setTimeout(()=>this.props.history.push("/chat"),2000)
                     
                 
                 }

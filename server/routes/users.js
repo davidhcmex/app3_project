@@ -98,17 +98,18 @@ router.post("/login", function (req, res, next) {
                 console.log(user);
                 bcrypt.compare(password, user.password, function (err, isMatch) {
                     if (isMatch) {
-                        console.log("Password Match");
+                        console.log("Password Matchoo");
                         var token = jwt.sign({
                             id: user._id,
                             username: username
                         }, jwtconfig_1.default.jwtSecret);
                         //   res.json({token})
-                        console.log(token);
-                        res.send({ token: token, isValid: true });
+                        //res.send({ token: token, isValid: true })
+                        res.cookie("auth", token, { httpOnly: true });
+                        res.send({ isValid: true });
                     }
                     else {
-                        console.log("No PAssword Match");
+                        console.log("No Password Match");
                         errors_1 = [{ param: "Password", msg: "Passwords do not match" }];
                         res.send({ errors: errors_1, isValid: false });
                     }

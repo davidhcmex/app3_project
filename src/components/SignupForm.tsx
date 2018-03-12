@@ -15,7 +15,7 @@ interface ErrorsInterface extends user_info {
 }
 
 
-export class SignupForm extends React.Component<{ userSignupRequest: any }, ErrorsInterface> {
+export class SignupForm extends React.Component<{ history: any }, ErrorsInterface> {
     constructor(props: any) {
         super(props)
         this.state = {
@@ -37,8 +37,12 @@ export class SignupForm extends React.Component<{ userSignupRequest: any }, Erro
             .then((response) => {
                 console.log("ACAAA");
                 console.log(response);
-               
+                if (response.data.errors)
+                    this.setState({ errors: response.data.errors, isValid: false })
+                else
+                    this.setState({ errors: [], isValid: true })
             });
+            this.props.history.push("/login")
         // console.log(this.props)  UNDEFINED
         //Hay que continuar AVANZANDO... esto de ligar con Redux QUEDA PENDIENTE,
         // VER REGISTER.TSX
