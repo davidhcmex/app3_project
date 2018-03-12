@@ -17,6 +17,7 @@
     "@types/react-router-dom": "^4.2.3",
     "@types/redux": "^3.6.0",
     "@types/redux-thunk": "^2.1.0",
+    "@types/socket.io-client": "^1.4.32",
     "@types/validator": "^9.4.0",
     "axios": "^0.17.1",
     "bcryptjs": "^2.4.3",
@@ -39,6 +40,7 @@
     "react-scripts-ts": "2.13.0",
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0",
+    "socket.io-client": "^2.0.4",
     "validator": "^9.4.1"
   },
   "scripts": {

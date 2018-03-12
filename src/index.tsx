@@ -7,6 +7,7 @@ import { Provider } from "react-redux"
 import thunk from "redux-thunk"
 import { createStore, applyMiddleware } from "redux"
 import setAuthorizationToken from "./utils/setAuthorizationToken"
+import reducer from './reducers/reducer';
 
 // const createStore = redux.createStore;
 
@@ -44,18 +45,20 @@ import setAuthorizationToken from "./utils/setAuthorizationToken"
 
 
 const store = createStore(
-(state = {}/*we here have no action */) => state,
+  reducer, {},
   applyMiddleware(thunk)
+  
+  //applyMiddleware(logger())
 )
 
 setAuthorizationToken(localStorage.token)
 
 ReactDOM.render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
-  document.getElementById('root') as HTMLElement
-);
+    <Provider store={store}>
+      <App />
+    </Provider>,
+    document.getElementById('root') as HTMLElement
+  );
 registerServiceWorker();
 
 //stores needs root reducer

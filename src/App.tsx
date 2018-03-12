@@ -11,7 +11,7 @@ import { Register } from "./components/Register";
 import { User } from "./components/User";
 import { Login } from "./components/Login";
 import { Header } from "./components/Header";
-import { Chat } from "./components/Chat";
+import { ChatComposed }  from "./components/ChatComposed";
 
 
 
@@ -28,7 +28,7 @@ class App extends React.Component {
                     <Route path={"/register"} component={Register} />
                     <Route path={"/login"} component={Login} />
                     <Route path={"/user/:id"} component={User} />
-                    <Route path={"/chat"} component={Chat} />
+                    <Route path={"/chat"} component={ChatComposed} />
 
                 </div>
             </BrowserRouter>
