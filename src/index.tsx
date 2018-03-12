@@ -5,9 +5,11 @@ import registerServiceWorker from './registerServiceWorker';
 
 import { Provider } from "react-redux"
 import thunk from "redux-thunk"
-import { createStore, applyMiddleware } from "redux"
+import { createStore, applyMiddleware} from "redux"
 import setAuthorizationToken from "./utils/setAuthorizationToken"
 import reducer from './reducers/reducer';
+
+import logger from "redux-logger";
 
 // const createStore = redux.createStore;
 
@@ -46,19 +48,19 @@ import reducer from './reducers/reducer';
 
 const store = createStore(
   reducer, {},
-  applyMiddleware(thunk)
-  
+  applyMiddleware(logger,thunk)
+
   //applyMiddleware(logger())
 )
 
 setAuthorizationToken(localStorage.token)
 
 ReactDOM.render(
-    <Provider store={store}>
-      <App />
-    </Provider>,
-    document.getElementById('root') as HTMLElement
-  );
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root') as HTMLElement
+);
 registerServiceWorker();
 
 //stores needs root reducer

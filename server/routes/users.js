@@ -68,6 +68,43 @@ router.post("/", function (req, res) {
         });
     }
 });
+router.post("/find", function (req, res, next) {
+    // const username = req.body.username;
+    // const password = req.body.password;
+    //let query = { username: username };
+    var query = User.find();
+    query.find({ username: /w*/ }).find(function (res) { console.log(res); });
+    // User.findOne(query, function (err: any, user: any) {
+    //     if (err) throw err;
+    //     if (!user) {
+    //         console.log("No User With that name")
+    //         errors = [{ param: "User Name", msg: "No user with that name" }]
+    //         res.send({ errors: errors, isValid: false })
+    //     }
+    //     else {
+    //         //match password
+    //         console.log(user)
+    //         bcrypt.compare(password, user.password, function (err, isMatch) {
+    //             if (isMatch) {
+    //                 console.log("Password Matchoo")
+    //                 const token = jwt.sign({
+    //                     id: user._id,
+    //                     username: username
+    //                 }, config.jwtSecret)
+    //                 //   res.json({token})
+    //                 //res.send({ token: token, isValid: true })
+    //                 res.cookie ("auth", token, { httpOnly: true });
+    //                 res.send({ isValid: true });
+    //             }
+    //             else {
+    //                 console.log("No Password Match")
+    //                 errors = [{ param: "Password", msg: "Passwords do not match" }]
+    //                 res.send({ errors: errors, isValid: false })
+    //             }
+    //         })
+    //     }
+    // })
+});
 router.post("/login", function (req, res, next) {
     // const username = req.body.username;
     // const password = req.body.password;

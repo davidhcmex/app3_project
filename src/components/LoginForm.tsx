@@ -1,7 +1,7 @@
 import * as React from "react";
 //import axios from "axios"
 import { connect } from "react-redux"
-import { login } from "./Actions/authActions"
+import { login } from "./Thunks/authThunk"
 import setAuthorizationToken from '../utils/setAuthorizationToken';
 import * as jwt from "jsonwebtoken";
 
