@@ -1,7 +1,8 @@
 import * as React from "react";
 import Chat from "./ChatSimple";
 import { Left } from "./Left";
-import '../index.css';
+import { Right } from "./Right";
+
 
 // Home is a Route and is also called by Root
 export class ChatComposed extends React.Component {
@@ -22,16 +23,8 @@ export class ChatComposed extends React.Component {
                         </div>
                     </article>
                     <aside className="sidebar2" >
-                        <h2>Sidebar 2 </h2>
-                        <ul>
-                            <li>Aenean orci ante</li>
-                            <li>Venenatis non adipiscing vita</li>
-                            <li> Fringilla et neque</li>
-                            <li>Aenean orci ante</li>
-                            <li>Venenatis non adipiscing vita</li>
-                            <li> Fringilla et neque</li>
-                        </ul>
-                        <p>Control Sidebar</p>
+                      
+                     <Right />
                     </aside>
                 </div>
                 <footer>

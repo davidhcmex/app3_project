@@ -1,5 +1,5 @@
 import * as React from 'react';
-import './custom.css';
+import './index.css';
 import './bootstrap.min.css';
 
 //import {Vehicle} from './Vehicle';

@@ -16,11 +16,11 @@
     
 // }
 
-export function emit(name:string, message:string) {
-    return (dispatch:Function) => {
-        return {
-            onEmit: (name:any, message:any) => dispatch({ type: 'EMIT_INPUT', payload: { name, message } })
-        }
-    }
+// export function emit(name:string, message:string) {
+//     return (dispatch:Function) => {
+//         return {
+//             onEmit: (name:any, message:any) => dispatch({ type: 'EMIT_INPUT', payload: { name, message } })
+//         }
+//     }
     
-}
+// }

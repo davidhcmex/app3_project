@@ -96,7 +96,7 @@ nav li:last-of-type a {
     border-right: none;	
 }
 nav a:hover {
-    background-color: rgb(93,43,78);
+    background-color: rgba(107, 148, 224, 0.774);
 }
 aside h2 {
     font-size: 1.3em;
@@ -125,7 +125,7 @@ footer {
     margin-top: 15px;
     font-size: .8em;	
     padding: 10px 10px 30px 10px;
-    background-color: black;
+    background-color: rgba(107, 148, 224, 0.774);
     color: rgb(204,204,204);
 }
 footer a {
