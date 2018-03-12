@@ -40,9 +40,11 @@ export class SignupForm extends React.Component<{ history: any }, ErrorsInterfac
                 if (response.data.errors)
                     this.setState({ errors: response.data.errors, isValid: false })
                 else
+                {
                     this.setState({ errors: [], isValid: true })
+                    this.props.history.push("/login")}
             });
-            this.props.history.push("/login")
+           
         // console.log(this.props)  UNDEFINED
         //Hay que continuar AVANZANDO... esto de ligar con Redux QUEDA PENDIENTE,
         // VER REGISTER.TSX
