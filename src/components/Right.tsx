@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { userlist } from "./Thunks/userlistThunk"
+//import { userlist } from "./Thunks/userlistThunk"
 import { connect } from "react-redux"
 
 interface StateInterface {
@@ -11,7 +11,9 @@ interface StateInterface {
 }
 
 interface PropsInterface {
-    userlist: any
+    userlist: any,
+    addAllContacts: any,
+    users: Array<{ _id: string, username: string, selected: boolean }>
 
 }
 
@@ -31,7 +33,7 @@ export class Right extends React.Component<PropsInterface, StateInterface>{
     }
 
     onChangeSearch(e: React.FormEvent<HTMLInputElement>) {
-       
+
         this.setState(
             {
                 searchTerm: e.currentTarget.value,
@@ -42,9 +44,15 @@ export class Right extends React.Component<PropsInterface, StateInterface>{
     onChange = (idx: number) => (e: React.FormEvent<HTMLInputElement>) => {
 
         //Using an auxiliary array to finally set the state to reflect the checked users
-        let array_aux = this.state.allUsers.slice()
+
+
+        //  let array_aux = this.state.allUsers.slice()
+        // 1/5 REDUX REDUX REDUX REDUX :-)
+        let array_aux = this.props.users.slice()
         array_aux[idx].selected = e.currentTarget.checked
-        this.setState({ allUsers: array_aux })
+        // this.setState({ allUsers: array_aux })
+        // 2/5 REDUX REDUX REDUX REDUX :-)
+        this.props.addAllContacts(array_aux)
         console.log(this.state.allUsers)
     }
 
@@ -57,7 +65,10 @@ export class Right extends React.Component<PropsInterface, StateInterface>{
                 const allUsers = response.data.map((user: any) => {
                     return { ...user, selected: false }
                 })
-                this.setState({ allUsers })
+                // this.setState({ allUsers })
+                // 3/5 REDUX REDUX REDUX REDUX :-)
+                this.props.addAllContacts(allUsers)
+                console.log(this.state)
             }
         )
 
@@ -71,7 +82,7 @@ export class Right extends React.Component<PropsInterface, StateInterface>{
 
     }
 
-    handleChat = (e:React.FormEvent<HTMLButtonElement>) => {
+    handleChat = (e: React.FormEvent<HTMLButtonElement>) => {
 
         console.log(e.currentTarget.id)
 
@@ -108,7 +119,10 @@ export class Right extends React.Component<PropsInterface, StateInterface>{
                                         </button>
 
                                     <ul className="list-group">
-                                        {(this.state.allUsers).map((d, idx) => {
+                                        {/* {(this.state.allUsers).map((d, idx) => { */}
+
+                                        {/* 4/5 REDUX REDUX REDUX REDUX REDUX */}
+                                        {(this.props.users).map((d: any, idx: any) => {
 
                                             return (<li key={idx} className="list-group-item"><input type="checkbox" onChange={this.onChange(idx)} id={d._id} />{d.username}</li>)
                                         })}
@@ -123,22 +137,56 @@ export class Right extends React.Component<PropsInterface, StateInterface>{
                         </div>
                     </div>
                 </div>
-                
-                    {(this.state.allUsers).map( (d, idx) => {
-                        if (d.selected) {
-                            let li_value = "Contact: ".concat(d.username)
-                            return (<button onClick = {this.handleChat} className="btn btn-info" key={idx} id={d._id}>{li_value}</button>)
-                        }
-                        else
-                            return
-                    })}
+                {/* 5/5 REDUX REDUX REDUX REDUX REDUX */}
+                {/* {(this.state.allUsers).map((d, idx) => { */}
+                {/* {(this.props.users).map((d, idx) => {
+                    if (d.selected) {
+                        let li_value = "Contact: ".concat(d.username)
+                        return (<button onClick={this.handleChat} className="btn btn-info" key={idx} id={d._id}>{li_value}</button>)
+                    }
+                    else
+                        return
+                })} */}
 
-                
+
             </div>
 
         );
     }
 }
 
+// return (dispatch:Function) => {
+//     return socket.emit("input", {name, message})
+// }
+import axios from "axios"
 
-export default connect<{}, {}, {}>(null, { userlist })(Right)
+const mapDispatchToProps = (dispatch: Function) => {
+    return {
+        userlist: (searchTerm: string) => axios.post("/api/users/userlist/", { searchParam: searchTerm }),
+        addAllContacts: (allUsers: Array<{ _id: string, username: string, selected: boolean }>) => dispatch({ type: "ADD_CONTACTS", payload: { allUsers } })
+    }
+}
+
+const mapStateToProps = (state: any) => {
+    return {
+        users: state.allUsersInState,
+    };
+};
+
+// export function userlist(searchTerm:string) {
+//     return (dispatch:Function) => {
+//         return axios.post("/api/users/userlist/",{searchParam:searchTerm})
+//     }
+
+// const mapDispatchToProps = dispatch => {
+//     return {
+//         onIncrementCounter: () => dispatch({type: actionTypes.INCREMENT}),
+//         onDecrementCounter: () => dispatch({type: actionTypes.DECREMENT}),
+//         onAddCounter: () => dispatch({type: actionTypes.ADD, val: 10}),
+//         onSubtractCounter: () => dispatch({type: actionTypes.SUBTRACT, val: 15}),
+//         onStoreResult: (result) => dispatch({type: actionTypes.STORE_RESULT, result: result}),
+//         onDeleteResult: (id) => dispatch({type: actionTypes.DELETE_RESULT, resultElId: id})
+//     }
+// };
+
+export default connect<{}, {}, {}>(mapStateToProps, mapDispatchToProps)(Right)

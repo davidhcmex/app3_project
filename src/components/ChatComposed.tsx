@@ -1,6 +1,6 @@
 import * as React from "react";
 import Chat from "./ChatSimple";
-import { Left } from "./Left";
+import  Left  from "./Left";
 import  Right  from "./Right";
 
 

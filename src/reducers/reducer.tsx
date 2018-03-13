@@ -1,37 +1,29 @@
 
-
-type objType = {
-    _id: string,
-    username: string,
-    selected: boolean
-}
-
 interface stateInterface {
-    allUsers: Array<objType>
+    allUsersInState: Array<{ _id: string, username: string, selected: boolean }>
 }
 
 var initialState: stateInterface = {
-    allUsers: []
+    allUsersInState: []
 }
 
-const reducer = (state = initialState, action: any) => {
+const reducer = (state = initialState, action:any) => {
 
-}
+    if (action.type === 'ADD_CONTACTS') {
+
+        return {
+            ...state,
+            allUsersInState: action.payload.allUsers
+        }
+    }
+    return state;
+};
+
 export default reducer;
 
 
 
 
-// const reducer = (state = {}, action:any) => {
 
-//     if (action.type === 'EMIT_INPUT') {
-//         console.log("here" + action.payload.name + action.payload.message )
-//         socket.emit("input", {name:action.payload.name, message:action.payload.message},()=>{console.log("done")})
-//         return state
-
-
-//     }
-//     return state;
-// };
 
 // export default reducer;
