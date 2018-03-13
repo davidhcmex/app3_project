@@ -8,6 +8,7 @@ var port = process.env.PORT || 5000;
 var bodyParser = require("body-parser");
 //const mongoose = require("mongoose");
 var config = require("./config/database");
+//const usersContacts = require("./config/userscontacts");
 var users = require("./routes/users");
 //mongoose.connect("mongodb://localhost/nodekb");
 mongoose.connect(config.database);

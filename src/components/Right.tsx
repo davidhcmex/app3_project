@@ -13,6 +13,8 @@ interface StateInterface {
 interface PropsInterface {
     userlist: any,
     addAllContacts: any,
+    addContactDB: any,
+    removeContactDB: any,
     users: Array<{ _id: string, username: string, selected: boolean }>
 
 }
@@ -45,15 +47,25 @@ export class Right extends React.Component<PropsInterface, StateInterface>{
 
         //Using an auxiliary array to finally set the state to reflect the checked users
 
+        if (e.currentTarget.checked) {
+            if (confirm("You sure you want to add this contact from your list?")) {
+                //  let array_aux = this.state.allUsers.slice()
+                // 1/5 REDUX REDUX REDUX REDUX :-)
+                let array_aux = this.props.users.slice()
+                array_aux[idx].selected = e.currentTarget.checked
+                // this.setState({ allUsers: array_aux })
+                // 2/5 REDUX REDUX REDUX REDUX :-)
+                this.props.addAllContacts(array_aux)
+                console.log(this.state.allUsers)
+              //  this.props.addContactDB(userId, array_aux[idx]._id)
+            }
+        }
+        else {
+            if (confirm("You sure you want to delete this contact from your list?")) {
+                //this.props.removeContactDB(userId, array_aux[idx]._id)
+            }
 
-        //  let array_aux = this.state.allUsers.slice()
-        // 1/5 REDUX REDUX REDUX REDUX :-)
-        let array_aux = this.props.users.slice()
-        array_aux[idx].selected = e.currentTarget.checked
-        // this.setState({ allUsers: array_aux })
-        // 2/5 REDUX REDUX REDUX REDUX :-)
-        this.props.addAllContacts(array_aux)
-        console.log(this.state.allUsers)
+        }
     }
 
     onSubmit(e: React.FormEvent<EventTarget>) {
@@ -162,7 +174,10 @@ import axios from "axios"
 
 const mapDispatchToProps = (dispatch: Function) => {
     return {
+        
         userlist: (searchTerm: string) => axios.post("/api/users/userlist/", { searchParam: searchTerm }),
+        addContactDB: (userId: string, contactId:string) => axios.post("/api/users/add/", { userId, contactId  }),
+        removeContactDB: (userId: string, contactId:string) => axios.post("/api/users/add/", { userId, contactId  }),
         addAllContacts: (allUsers: Array<{ _id: string, username: string, selected: boolean }>) => dispatch({ type: "ADD_CONTACTS", payload: { allUsers } })
     }
 }

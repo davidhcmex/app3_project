@@ -77,6 +77,15 @@ router.post("/userlist", function (req, res, next) {
         res.send(users);
     });
 });
+router.post("/userlist", function (req, res, next) {
+    // const username = req.body.username;
+    // const password = req.body.password;
+    console.log(req.body);
+    User.find((req.body.searchParam) ? { username: req.body.searchParam } : {}).select('username').exec(function (err, users) {
+        console.log(users);
+        res.send(users);
+    });
+});
 router.post("/login", function (req, res, next) {
     // const username = req.body.username;
     // const password = req.body.password;
@@ -115,7 +124,7 @@ router.post("/login", function (req, res, next) {
                         //   res.json({token})
                         //res.send({ token: token, isValid: true })
                         res.cookie("auth", token, { httpOnly: true });
-                        res.send({ isValid: true });
+                        res.send({ isValid: true, id: user._id });
                     }
                     else {
                         console.log("No Password Match");

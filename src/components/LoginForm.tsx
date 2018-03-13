@@ -1,9 +1,10 @@
 import * as React from "react";
 //import axios from "axios"
 import { connect } from "react-redux"
-import { login } from "./Thunks/authThunk"
+//import { login } from "./Thunks/authThunk"
 import setAuthorizationToken from '../utils/setAuthorizationToken';
 import * as jwt from "jsonwebtoken";
+import axios from "axios";
 
 
 //Here we will use redux to use  an action that will 
@@ -13,7 +14,7 @@ interface StateInterface {
     username: string,
     password: string,
     isValid: boolean,
-    token:string
+    token: string
 
 }
 
@@ -22,7 +23,7 @@ interface ErrorsInterface extends StateInterface {
 }
 
 
-class LoginForm extends React.Component<{ login: any, history: any }, ErrorsInterface> {
+class LoginForm extends React.Component<{ login: any, history: any, setUserId: any }, ErrorsInterface> {
 
     //class LoginForm extends React.Component<RouteComponentProps<{id:string}>, ErrorsInterface> {
     constructor(props: any) {
@@ -32,7 +33,7 @@ class LoginForm extends React.Component<{ login: any, history: any }, ErrorsInte
             password: "",
             errors: [{ param: "", msg: "", value: "" }],
             isValid: true,
-            token:""
+            token: ""
 
 
         }
@@ -58,15 +59,19 @@ class LoginForm extends React.Component<{ login: any, history: any }, ErrorsInte
                     //     token: response.data.token,
                     //     isValid: true
                     // })
-                    
+
                     const token = response.data.token;
                     localStorage.setItem("jwtToken", token)
                     setAuthorizationToken(token)
                     console.log(jwt.decode(token))
-                    this.setState({errors: [{ param: "Ok", msg: ".. Redirecting to login page", value: "" }], isValid:false})
-                    setTimeout(()=>this.props.history.push("/chat"),2000)
-                    
-                
+
+                    console.log(response.data)
+                    // REDUX REDUX REDUX REDUX
+                    this.props.setUserId(response.data.id)
+                    this.setState({ errors: [{ param: "Ok", msg: ".. Redirecting to login page", value: "" }], isValid: false })
+                    setTimeout(() => this.props.history.push("/chat"), 2000)
+
+
                 }
 
 
@@ -132,7 +137,7 @@ class LoginForm extends React.Component<{ login: any, history: any }, ErrorsInte
                     {!(this.state.isValid) ? (
                         <ul>
                             {(this.state.errors).map(function (d, idx) {
-                                let li_value = "Field: ".concat(d.param,  "Remark: ", d.msg)
+                                let li_value = "Field: ".concat(d.param, "Remark: ", d.msg)
                                 return (<li key={idx}>{li_value}</li>)
                             })}
 
@@ -145,8 +150,35 @@ class LoginForm extends React.Component<{ login: any, history: any }, ErrorsInte
 
 
 
-//dispatch to props as second parameter
-export default connect<{}, {}, { history: any }>(null, { login })(LoginForm)
+// export function login(data:any) {
+//     return (dispatch:Function) => {
+//         return axios.post("/api/users/login",{username:data.username,password:data.password})
+//     }
+
+// }
+
+// .then((response) => {
+//     console.log("ACAAA");
+//     console.log(response);
+//     if (response.data.errors)
+//         this.setState({ errors: response.data.errors, isValid: false })
+//     else
+//     {
+//         this.setState({ errors: [], isValid: true })
+//         this.props.history.push("/login")}
+// });
+
+const mapDispatchToProps = (dispatch: Function) => {
+    return {
+        login: (data: {username:string, password:string}) => axios.post("/api/users/login/", { username: data.username, password: data.password }),
+        setUserId: (id: string) => dispatch({ type: "SET_USER_ID", payload: {id} })
+    }
+}
+
+
+//addAllContacts: (allUsers: Array<{ _id: string, username: string, selected: boolean }>) => dispatch({ type: "ADD_CONTACTS", payload: { allUsers } })
+
+export default connect<{}, {}, { history: any }>(null, mapDispatchToProps)(LoginForm)
 
 
 
