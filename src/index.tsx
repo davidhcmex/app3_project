@@ -9,7 +9,7 @@ import { createStore, applyMiddleware} from "redux"
 import setAuthorizationToken from "./utils/setAuthorizationToken"
 import reducer from './reducers/reducer';
 
-import logger from "redux-logger";
+//import logger from "redux-logger";
 
 // const createStore = redux.createStore;
 
@@ -48,7 +48,7 @@ import logger from "redux-logger";
 
 const store = createStore(
   reducer, {},
-  applyMiddleware(logger,thunk)
+  applyMiddleware(thunk)
 
   //applyMiddleware(logger())
 )

@@ -1,7 +1,7 @@
 import * as React from "react";
 import Chat from "./ChatSimple";
 import { Left } from "./Left";
-import { Right } from "./Right";
+import  Right  from "./Right";
 
 
 // Home is a Route and is also called by Root
