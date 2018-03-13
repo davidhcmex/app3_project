@@ -7,9 +7,15 @@ interface StateInterface {
     allUsers: Array<{ _id: string, username: string, selected: boolean }>
     //selectedUsers: Array<{ _id: string, username: string }>
     searchTerm: string
+
 }
 
-export class Right extends React.Component<{ userlist: any }, StateInterface>{
+interface PropsInterface {
+    userlist: any
+
+}
+
+export class Right extends React.Component<PropsInterface, StateInterface>{
 
     constructor(props: any) {
         super(props)
@@ -19,26 +25,27 @@ export class Right extends React.Component<{ userlist: any }, StateInterface>{
             searchTerm: "",
             // selectedUsers: [{ _id: "", username: "" }],
         }
-       // this.onChange = this.onChange.bind(this)
+        // this.onChange = this.onChange.bind(this)
         this.onSubmit = this.onSubmit.bind(this)
         this.onChangeSearch = this.onChangeSearch.bind(this)
     }
 
     onChangeSearch(e: React.FormEvent<HTMLInputElement>) {
+       
         this.setState(
             {
                 searchTerm: e.currentTarget.value,
             })
     }
 
-     //this is currying that accepts a casted idx and returns a function
-    onChange=(idx:number)=>(e: React.FormEvent<HTMLInputElement>) => {
+    //this is currying that accepts a casted idx and returns a function
+    onChange = (idx: number) => (e: React.FormEvent<HTMLInputElement>) => {
 
         //Using an auxiliary array to finally set the state to reflect the checked users
-       let array_aux = this.state.allUsers.slice()
-       array_aux[idx].selected = e.currentTarget.checked
-       this.setState({allUsers:array_aux})
-       console.log(this.state.allUsers)
+        let array_aux = this.state.allUsers.slice()
+        array_aux[idx].selected = e.currentTarget.checked
+        this.setState({ allUsers: array_aux })
+        console.log(this.state.allUsers)
     }
 
     onSubmit(e: React.FormEvent<EventTarget>) {
@@ -46,7 +53,7 @@ export class Right extends React.Component<{ userlist: any }, StateInterface>{
 
         this.props.userlist(this.state.searchTerm).then(
             (response: any) => {
-                //using spread operator to finally add a field the response
+                //TIP using spread operator to finally add a field the response
                 const allUsers = response.data.map((user: any) => {
                     return { ...user, selected: false }
                 })
@@ -61,6 +68,12 @@ export class Right extends React.Component<{ userlist: any }, StateInterface>{
 
         console.log(this.state)
 
+
+    }
+
+    handleChat = (e:React.FormEvent<HTMLButtonElement>) => {
+
+        console.log(e.currentTarget.id)
 
     }
 
@@ -104,15 +117,23 @@ export class Right extends React.Component<{ userlist: any }, StateInterface>{
                                 </form>
                             </div>
 
-
-
                             <div className="modal-footer">
                                 <button onClick={this.updateContacts} type="button" className="btn btn-danger" data-dismiss="modal">Close</button>
                             </div>
                         </div>
                     </div>
                 </div>
+                
+                    {(this.state.allUsers).map( (d, idx) => {
+                        if (d.selected) {
+                            let li_value = "Contact: ".concat(d.username)
+                            return (<button onClick = {this.handleChat} className="btn btn-info" key={idx} id={d._id}>{li_value}</button>)
+                        }
+                        else
+                            return
+                    })}
 
+                
             </div>
 
         );

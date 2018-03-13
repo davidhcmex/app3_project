@@ -6,6 +6,7 @@ import  Right  from "./Right";
 
 // Home is a Route and is also called by Root
 export class ChatComposed extends React.Component {
+
     render() {
         return (
             <div className="pageWrapper">

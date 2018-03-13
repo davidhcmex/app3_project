@@ -82,8 +82,8 @@ router.post("/userlist", function (req, res, next) {
     // const username = req.body.username;
     // const password = req.body.password;
 
-  console.log(req.body)
-User.find((req.body.searchParam)?{username:req.body.searchParam}:{}).select('username').exec(function (err: any, users: any) {
+    console.log(req.body)
+    User.find((req.body.searchParam) ? { username: req.body.searchParam } : {}).select('username').exec(function (err: any, users: any) {
         console.log(users)
         res.send(users)
     });
@@ -95,10 +95,9 @@ router.post("/login", function (req, res, next) {
 
     const { username, password } = req.body
 
-
+   
     req.checkBody("username", "Name is required").notEmpty();
     req.checkBody("password", "Password is required").notEmpty();
-
 
     let errors = req.validationErrors();
     if (errors) {

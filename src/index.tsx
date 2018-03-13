@@ -7,7 +7,7 @@ import { Provider } from "react-redux"
 import thunk from "redux-thunk"
 import { createStore, applyMiddleware} from "redux"
 import setAuthorizationToken from "./utils/setAuthorizationToken"
-import reducer from './reducers/reducer';
+//import reducer from './reducers/reducer';
 
 //import logger from "redux-logger";
 
@@ -47,7 +47,7 @@ import reducer from './reducers/reducer';
 
 
 const store = createStore(
-  reducer, {},
+  (state = {}, {}) =>state, {},
   applyMiddleware(thunk)
 
   //applyMiddleware(logger())

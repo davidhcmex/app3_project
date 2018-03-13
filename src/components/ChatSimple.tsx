@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as openSocket from 'socket.io-client';
 import { connect } from "react-redux"
+import { emit } from "./Thunks/emitThunk"
 
 //import { emit } from "./Actions/emitActions"
 
@@ -13,7 +14,7 @@ interface stateInterface {
 }
 
 interface propsInterface {
-    onEmit:any
+    emit:any
 }
 
 export class Chat extends React.Component<propsInterface, stateInterface> {
@@ -82,7 +83,7 @@ export class Chat extends React.Component<propsInterface, stateInterface> {
 
         // REDUX
 
-        this.props.onEmit(this["uname"].value, this["message"].value)
+        this.props.emit(this["uname"].value, this["message"].value)
 
     }
 
@@ -141,11 +142,6 @@ export class Chat extends React.Component<propsInterface, stateInterface> {
     }
 }
 
-const mapDispatchToProps = (dispatch:any) => {
-    return {
-        onEmit: (name:any, message:any) => dispatch({ type: 'EMIT_INPUT', payload: { name, message } })
-    };
-};
 
-export default connect<{}, {}, {}>(null, mapDispatchToProps)(Chat)
+export default connect<{}, {}, {}>(null, { emit })(Chat)
 //export default connect(null, mapDispatchToProps)(Chat)
