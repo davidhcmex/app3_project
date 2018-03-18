@@ -2,8 +2,8 @@ import * as React from "react";
 //import axios from "axios"
 import { connect } from "react-redux"
 //import { login } from "./Thunks/authThunk"
-import setAuthorizationToken from '../utils/setAuthorizationToken';
-import * as jwt from "jsonwebtoken";
+//import setAuthorizationToken from '../utils/setAuthorizationToken';
+//import * as jwt from "jsonwebtoken";
 import axios from "axios";
 
 
@@ -60,14 +60,15 @@ class LoginForm extends React.Component<{ login: any, history: any, setUserId: a
                     //     isValid: true
                     // })
 
-                    const token = response.data.token;
-                    localStorage.setItem("jwtToken", token)
-                    setAuthorizationToken(token)
-                    console.log(jwt.decode(token))
+                    // const token = response.data.token;
+                    // localStorage.setItem("jwtToken", token)
+                    // setAuthorizationToken(token)
+                    // console.log(jwt.decode(token))
 
-                    console.log(response.data)
+                  
                     // REDUX REDUX REDUX REDUX
-                    this.props.setUserId(response.data.id)
+                    console.log(response.data.username)
+                    this.props.setUserId(response.data.id,response.data.username)
                     this.setState({ errors: [{ param: "Ok", msg: ".. Redirecting to login page", value: "" }], isValid: false })
                     setTimeout(() => this.props.history.push("/chat"), 2000)
 
@@ -79,17 +80,7 @@ class LoginForm extends React.Component<{ login: any, history: any, setUserId: a
             }
         )
 
-        //We will substitue this with an action (Although it is working quite fine )
-        // axios.post("/api/users/login", this.state)
-        //     .then((response) => {
-        //         console.log(response)
-        //         this.setState({
-        //             errors: response.data.errors,
-        //             isValid: response.data.isValid
-        //         })
-        //     });
-
-        console.log(this.state)
+    
     }
 
     onChange(e: React.FormEvent<EventTarget>) {
@@ -149,29 +140,10 @@ class LoginForm extends React.Component<{ login: any, history: any, setUserId: a
 }
 
 
-
-// export function login(data:any) {
-//     return (dispatch:Function) => {
-//         return axios.post("/api/users/login",{username:data.username,password:data.password})
-//     }
-
-// }
-
-// .then((response) => {
-//     console.log("ACAAA");
-//     console.log(response);
-//     if (response.data.errors)
-//         this.setState({ errors: response.data.errors, isValid: false })
-//     else
-//     {
-//         this.setState({ errors: [], isValid: true })
-//         this.props.history.push("/login")}
-// });
-
 const mapDispatchToProps = (dispatch: Function) => {
     return {
         login: (data: {username:string, password:string}) => axios.post("/api/users/login/", { username: data.username, password: data.password }),
-        setUserId: (id: string) => dispatch({ type: "SET_USER_ID", payload: {id} })
+        setUserId: (id: string, username:string) => dispatch({ type: "SET_USER_ID", payload: {username,id} })
     }
 }
 

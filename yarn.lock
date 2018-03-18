@@ -132,6 +132,14 @@
     "@types/events" "*"
     "@types/node" "*"
 
+"@types/mongodb@^3.0.8":
+  version "3.0.8"
+  resolved "https://registry.yarnpkg.com/@types/mongodb/-/mongodb-3.0.8.tgz#4d222cbe8831f326fe3bed5aca12bd3a3e061752"
+  dependencies:
+    "@types/bson" "*"
+    "@types/events" "*"
+    "@types/node" "*"
+
 "@types/mongoose@^5.0.5":
   version "5.0.5"
   resolved "https://registry.yarnpkg.com/@types/mongoose/-/mongoose-5.0.5.tgz#080af4bee4da06ac55619fbe690646681dabea15"
@@ -237,6 +245,12 @@
 "@types/socket.io-client@^1.4.32":
   version "1.4.32"
   resolved "https://registry.yarnpkg.com/@types/socket.io-client/-/socket.io-client-1.4.32.tgz#988a65a0386c274b1c22a55377fab6a30789ac14"
+
+"@types/socket.io@^1.4.32":
+  version "1.4.32"
+  resolved "https://registry.yarnpkg.com/@types/socket.io/-/socket.io-1.4.32.tgz#bf7bc4ea6991327f31672c05e237a8a28d7bfc30"
+  dependencies:
+    "@types/node" "*"
 
 "@types/validator@^9.4.0":
   version "9.4.0"
@@ -753,6 +767,10 @@ base64-js@^1.0.2:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.2.1.tgz#a91947da1f4a516ea38e5b4ec0ec3773675e0886"
 
+base64id@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/base64id/-/base64id-1.0.0.tgz#47688cb99bb6804f0e06d3e763b1c32e57d8e6b6"
+
 base64url@2.0.0, base64url@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/base64url/-/base64url-2.0.0.tgz#eac16e03ea1438eff9423d69baa36262ed1f70bb"
@@ -982,6 +1000,10 @@ bser@^2.0.0:
   resolved "https://registry.yarnpkg.com/bser/-/bser-2.0.0.tgz#9ac78d3ed5d915804fd87acb158bc797147a1719"
   dependencies:
     node-int64 "^0.4.0"
+
+bson@~0.5.1:
+  version "0.5.7"
+  resolved "https://registry.yarnpkg.com/bson/-/bson-0.5.7.tgz#0d11fe0936c1fee029e11f7063f5d0ab2422ea3e"
 
 bson@~1.0.4:
   version "1.0.5"
@@ -1619,7 +1641,7 @@ date-now@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/date-now/-/date-now-0.1.4.tgz#eaf439fd4d4848ad74e5cc7dbef200672b9e345b"
 
-debug@2.6.9, debug@^2.2.0, debug@^2.6.0, debug@^2.6.6, debug@^2.6.8, debug@~2.6.4:
+debug@2.6.9, debug@^2.2.0, debug@^2.6.0, debug@^2.6.6, debug@^2.6.8, debug@~2.6.4, debug@~2.6.6:
   version "2.6.9"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.9.tgz#5d128515df134ff327e90a4c93f4e077a536341f"
   dependencies:
@@ -1913,7 +1935,7 @@ engine.io-client@~3.1.0:
     xmlhttprequest-ssl "~1.5.4"
     yeast "0.1.2"
 
-engine.io-parser@~2.1.1:
+engine.io-parser@~2.1.0, engine.io-parser@~2.1.1:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/engine.io-parser/-/engine.io-parser-2.1.2.tgz#4c0f4cff79aaeecbbdcfdea66a823c6085409196"
   dependencies:
@@ -1922,6 +1944,19 @@ engine.io-parser@~2.1.1:
     base64-arraybuffer "0.1.5"
     blob "0.0.4"
     has-binary2 "~1.0.2"
+
+engine.io@~3.1.0:
+  version "3.1.5"
+  resolved "https://registry.yarnpkg.com/engine.io/-/engine.io-3.1.5.tgz#0e7ef9d690eb0b35597f1d4ad02a26ca2dba3845"
+  dependencies:
+    accepts "~1.3.4"
+    base64id "1.0.0"
+    cookie "0.3.1"
+    debug "~3.1.0"
+    engine.io-parser "~2.1.0"
+    ws "~3.3.1"
+  optionalDependencies:
+    uws "~9.14.0"
 
 enhanced-resolve@^3.0.0, enhanced-resolve@^3.4.0:
   version "3.4.1"
@@ -1995,6 +2030,10 @@ es6-map@^0.1.3:
     es6-set "~0.1.5"
     es6-symbol "~3.1.1"
     event-emitter "~0.3.5"
+
+es6-promise@3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/es6-promise/-/es6-promise-3.0.2.tgz#010d5858423a5f118979665f46486a95c6ee2bb6"
 
 es6-promise@^4.0.5:
   version "4.2.4"
@@ -4165,12 +4204,27 @@ mkdirp@0.5.x, "mkdirp@>=0.5 0", mkdirp@^0.5.1, mkdirp@~0.5.0, mkdirp@~0.5.1:
   dependencies:
     minimist "0.0.8"
 
+mongodb-core@2.0.6:
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/mongodb-core/-/mongodb-core-2.0.6.tgz#7f1be79d886495c8ad696d70e3be834d61e1b843"
+  dependencies:
+    bson "~0.5.1"
+    require_optional "~1.0.0"
+
 mongodb-core@3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/mongodb-core/-/mongodb-core-3.0.2.tgz#914896092dd45427d9a4f98a7997a0bfb81d163b"
   dependencies:
     bson "~1.0.4"
     require_optional "^1.0.1"
+
+mongodb@2.2.3:
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-2.2.3.tgz#492cedbe7387552c9cf2e4f5bc40eb78e06203ab"
+  dependencies:
+    es6-promise "3.0.2"
+    mongodb-core "2.0.6"
+    readable-stream "1.0.31"
 
 mongodb@3.0.2:
   version "3.0.2"
@@ -5404,6 +5458,15 @@ readable-stream@1.0:
     isarray "0.0.1"
     string_decoder "~0.10.x"
 
+readable-stream@1.0.31:
+  version "1.0.31"
+  resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-1.0.31.tgz#8f2502e0bc9e3b0da1b94520aabb4e2603ecafae"
+  dependencies:
+    core-util-is "~1.0.0"
+    inherits "~2.0.1"
+    isarray "0.0.1"
+    string_decoder "~0.10.x"
+
 readable-stream@^2.0.1, readable-stream@^2.0.2, readable-stream@^2.0.6, readable-stream@^2.1.4, readable-stream@^2.2.9, readable-stream@^2.3.3:
   version "2.3.3"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.3.3.tgz#368f2512d79f9d46fdfc71349ae7878bbc1eb95c"
@@ -5643,7 +5706,7 @@ require-main-filename@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/require-main-filename/-/require-main-filename-1.0.1.tgz#97f717b69d48784f5f526a6c5aa8ffdda055a4d1"
 
-require_optional@^1.0.1:
+require_optional@^1.0.1, require_optional@~1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/require_optional/-/require_optional-1.0.1.tgz#4cf35a4247f64ca3df8c2ef208cc494b1ca8fc2e"
   dependencies:
@@ -5922,7 +5985,11 @@ sntp@2.x.x:
   dependencies:
     hoek "4.x.x"
 
-socket.io-client@^2.0.4:
+socket.io-adapter@~1.1.0:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/socket.io-adapter/-/socket.io-adapter-1.1.1.tgz#2a805e8a14d6372124dd9159ad4502f8cb07f06b"
+
+socket.io-client@2.0.4, socket.io-client@^2.0.4:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/socket.io-client/-/socket.io-client-2.0.4.tgz#0918a552406dc5e540b380dcd97afc4a64332f8e"
   dependencies:
@@ -5948,6 +6015,16 @@ socket.io-parser@~3.1.1:
     debug "~3.1.0"
     has-binary2 "~1.0.2"
     isarray "2.0.1"
+
+socket.io@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/socket.io/-/socket.io-2.0.4.tgz#c1a4590ceff87ecf13c72652f046f716b29e6014"
+  dependencies:
+    debug "~2.6.6"
+    engine.io "~3.1.0"
+    socket.io-adapter "~1.1.0"
+    socket.io-client "2.0.4"
+    socket.io-parser "~3.1.1"
 
 sockjs-client@1.1.4:
   version "1.1.4"
@@ -6721,6 +6798,10 @@ uuid@^2.0.2:
 uuid@^3.0.0, uuid@^3.1.0:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.2.1.tgz#12c528bb9d58d0b9265d9a2f6f0fe8be17ff1f14"
+
+uws@~9.14.0:
+  version "9.14.0"
+  resolved "https://registry.yarnpkg.com/uws/-/uws-9.14.0.tgz#fac8386befc33a7a3705cbd58dc47b430ca4dd95"
 
 validate-npm-package-license@^3.0.1:
   version "3.0.1"

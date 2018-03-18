@@ -7,6 +7,7 @@ var express = require("express");
 var expressValidator = require("express-validator");
 var router = express.Router();
 var User = require("../models/users");
+var Contact = require("../models/contacts");
 //const bcrypt = require("bcryptjs");
 var bcrypt = require("bcryptjs");
 var jwt = require("jsonwebtoken");
@@ -72,18 +73,38 @@ router.post("/userlist", function (req, res, next) {
     // const username = req.body.username;
     // const password = req.body.password;
     console.log(req.body);
-    User.find((req.body.searchParam) ? { username: req.body.searchParam } : {}).select('username').exec(function (err, users) {
+    User.find((req.body.searchParam) ? { username: { $regex: req.body.searchParam, $options: "i" } } : {}).
+        limit(5).
+        select('username').exec(function (err, users) {
         console.log(users);
         res.send(users);
     });
 });
-router.post("/userlist", function (req, res, next) {
+router.post("/contactlist", function (req, res, next) {
     // const username = req.body.username;
     // const password = req.body.password;
     console.log(req.body);
-    User.find((req.body.searchParam) ? { username: req.body.searchParam } : {}).select('username').exec(function (err, users) {
-        console.log(users);
-        res.send(users);
+    Contact.find({ user: req.body.userIdParam }).exec(function (err, contacts) {
+        console.log("ACA");
+        console.log(contacts);
+        res.send(contacts);
+    });
+});
+router.post("/add", function (req, res, next) {
+    // const username = req.body.username;
+    // const password = req.body.password;
+    var newContact = new Contact({
+        user: req.body.userId,
+        username: req.body.username,
+        contact: req.body.contactId,
+        contactname: req.body.contactName
+    });
+    console.log(req.body);
+    newContact.save(function (err) {
+        if (!(err))
+            res.send({ "ok": "ok" });
+        else
+            (console.log(err));
     });
 });
 router.post("/login", function (req, res, next) {
@@ -124,7 +145,7 @@ router.post("/login", function (req, res, next) {
                         //   res.json({token})
                         //res.send({ token: token, isValid: true })
                         res.cookie("auth", token, { httpOnly: true });
-                        res.send({ isValid: true, id: user._id });
+                        res.send({ isValid: true, id: user._id, username: user.username });
                     }
                     else {
                         console.log("No Password Match");

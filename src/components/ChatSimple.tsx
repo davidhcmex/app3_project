@@ -1,30 +1,37 @@
 import * as React from 'react';
-import * as openSocket from 'socket.io-client';
+//import * as openSocket from 'socket.io-client';
 import { connect } from "react-redux"
-import { emit } from "./Thunks/emitThunk"
+//import handleSocket from "../modules/socketHandling"
+//import { emit } from "./Thunks/emitThunk"
 
 //import { emit } from "./Actions/emitActions"
 
 interface stateInterface {
-    name: string,
+ 
     message: string,
     status: string,
+    
     the_messages: Array<{ name: string, message: string }>
 
 }
 
-interface propsInterface {
-    emit:any
+interface PropsInterface {
+    username:string,
 }
 
-export class Chat extends React.Component<propsInterface, stateInterface> {
+interface p {
+    socket:SocketIOClient.Socket
+}
+
+export class Chat extends React.Component<PropsInterface & p, stateInterface> {
 
     constructor(props: any) {
         super(props)
         this.state = {
-            name: "",
+      
             message: "",
             status: "",
+            
             the_messages: [{ name: "", message: "" }],
 
         }
@@ -37,13 +44,15 @@ export class Chat extends React.Component<propsInterface, stateInterface> {
 
     }
 
+    
+
 
     onChange(e: React.FormEvent<EventTarget>) {
 
         this.setState(
             {
-                name: this["uname"].value,
-                message: this["message"].value,
+                
+                message: this["message"].value
 
 
 
@@ -51,11 +60,9 @@ export class Chat extends React.Component<propsInterface, stateInterface> {
     }
 
     componentDidMount() {
-        var socket = openSocket('http://127.0.0.1:4000');
 
-
-        //receiving data to be output to local component render
-        socket.on('output', (data: any) => this.display_screen(data));
+         //receiving data to be output to local component render
+         this.props.socket.on('output', (data: any) => this.display_screen(data));
     }
 
     display_screen(data: any) {
@@ -68,22 +75,25 @@ export class Chat extends React.Component<propsInterface, stateInterface> {
     onSubmit(e:React.FormEvent<EventTarget>) {
 
         e.preventDefault()
-        console.log(arguments)
-        var socket = openSocket('http://127.0.0.1:4000');
 
-        //ASK IVAN AND ALSO NEXT
-        socket.on("status", (data:any) => {
+      //  var socket = openSocket('http://127.0.0.1:4000');
+
+        
+        this.props.socket.on("status", (data:any) => {
             this.setState({ status: data.status })
 
         })
-        // emitting to server and others the incoming message
-        //socket.emit("input", { name: this["uname"].value, message: this["message"].value })
+
+
+
+
+        this.props.socket.emit("input", { name: this.props.username, message: this["message"].value })
 
         // OR
 
         // REDUX
 
-        this.props.emit(this["uname"].value, this["message"].value)
+        //this.props.emit(this["uname"].value, this["message"].value)
 
     }
 
@@ -96,13 +106,8 @@ export class Chat extends React.Component<propsInterface, stateInterface> {
                         <form onSubmit={this.onSubmit}>
 
                             <div className="form-group">
-                                <label className="control-label">Username</label>
-                                <input value={this.state.name}
-                                    ref={node => this["uname"] = node}
-                                    type="text"
-                                    name="Enter name"
-                                    onChange={this.onChange}
-                                    className="form-control" />
+                                <label className="control-label">Logged User {this.props.username}</label>
+                         
 
                             </div>
                             <div id="chat">
@@ -142,6 +147,12 @@ export class Chat extends React.Component<propsInterface, stateInterface> {
     }
 }
 
-
-export default connect<{}, {}, {}>(null, { emit })(Chat)
+const mapStateToProps = (state: any) => {
+    return {
+ 
+        userId: state.idLoggedUser,
+        username: state.nameLoggedUser
+    };
+};
+export default connect<PropsInterface, {}, {socket:SocketIOClient.Socket}>(mapStateToProps, { })(Chat)
 //export default connect(null, mapDispatchToProps)(Chat)

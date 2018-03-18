@@ -1,24 +1,30 @@
 
 interface stateInterface {
     allUsersInState: Array<{ _id: string, username: string, selected: boolean }>
-    idLoggedUser: string
+    idLoggedUser: string,
+    allContactsInState: Array<{ _id: string, userId: string, contactId: string }>
 }
 
 var initialState: stateInterface = {
     allUsersInState: [],
-    idLoggedUser: ""
+    idLoggedUser: "",
+    allContactsInState: []
 }
 
 interface payloadInterface {
-    type:string,
+    type: string,
     payload: {
-        id:string,
-        allUsers:Array<{ _id: string, username: string, selected: boolean }> }
+        id: string,
+        username:string,
+        allUsers: Array<{ _id: string, username: string, selected: boolean }>
+        allContacts: Array<{ _id: string, userId: string, contactId: string }>
+    }
 }
 
-const reducer = (state = initialState, action:payloadInterface ) => {
 
-    if (action.type === 'ADD_CONTACTS') {
+const reducer = (state = initialState, action: payloadInterface) => {
+
+    if (action.type === 'ADD_USERS') {
 
         return {
             ...state,
@@ -27,12 +33,23 @@ const reducer = (state = initialState, action:payloadInterface ) => {
     }
 
     if (action.type === 'SET_USER_ID') {
-      
+
         return {
             ...state,
-            idLoggedUser: action.payload.id
+            idLoggedUser: action.payload.id,
+            nameLoggedUser: action.payload.username
         }
     }
+
+    if (action.type === 'ADD_CONTACTS') {
+
+        return {
+            ...state,
+            allContactsInState: action.payload.allContacts
+        }
+    }
+
+
 
     return state;
 };

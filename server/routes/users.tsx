@@ -5,6 +5,7 @@ import * as express from "express"
 import * as expressValidator from "express-validator"
 let router = express.Router();
 let User = require("../models/users");
+let Contact = require("../models/contacts");
 //const bcrypt = require("bcryptjs");
 import * as bcrypt from "bcryptjs"
 import * as jwt from "jsonwebtoken"
@@ -83,20 +84,44 @@ router.post("/userlist", function (req, res, next) {
     // const password = req.body.password;
 
     console.log(req.body)
-    User.find((req.body.searchParam) ? { username: req.body.searchParam } : {}).select('username').exec(function (err: any, users: any) {
-        console.log(users)
-        res.send(users)
-    });
+    User.find((req.body.searchParam) ? { username: { $regex: req.body.searchParam, $options: "i" } } : {}).
+        limit(5).
+        select('username').exec(function (err: any, users: any) {
+            console.log(users)
+            res.send(users)
+        });
 })
 
-router.post("/userlist", function (req, res, next) {
+
+router.post("/contactlist", function (req, res, next) {
     // const username = req.body.username;
     // const password = req.body.password;
 
     console.log(req.body)
-    User.find((req.body.searchParam) ? { username: req.body.searchParam } : {}).select('username').exec(function (err: any, users: any) {
-        console.log(users)
-        res.send(users)
+    Contact.find({ user: req.body.userIdParam }).exec(function (err: any, contacts: any) {
+        console.log("ACA")
+        console.log(contacts)
+        res.send(contacts)
+    });
+})
+
+router.post("/add", function (req, res, next) {
+    // const username = req.body.username;
+    // const password = req.body.password;
+
+    let newContact = new Contact({
+        user: req.body.userId,
+        username: req.body.username,
+        contact: req.body.contactId,
+        contactname: req.body.contactName
+
+    })
+    console.log(req.body)
+    newContact.save(function (err: any) {
+        if (!(err))
+            res.send({ "ok": "ok" })
+            else
+            (console.log(err))
     });
 })
 
@@ -106,7 +131,7 @@ router.post("/login", function (req, res, next) {
 
     const { username, password } = req.body
 
-   
+
     req.checkBody("username", "Name is required").notEmpty();
     req.checkBody("password", "Password is required").notEmpty();
 
@@ -148,7 +173,8 @@ router.post("/login", function (req, res, next) {
                         //res.send({ token: token, isValid: true })
 
                         res.cookie("auth", token, { httpOnly: true });
-                        res.send({ isValid: true, id:user._id });
+                        
+                        res.send({ isValid: true, id: user._id, username:user.username });
 
                     }
                     else {

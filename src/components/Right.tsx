@@ -15,6 +15,8 @@ interface PropsInterface {
     addAllContacts: any,
     addContactDB: any,
     removeContactDB: any,
+    userId: string,
+    username:string,
     users: Array<{ _id: string, username: string, selected: boolean }>
 
 }
@@ -55,9 +57,10 @@ export class Right extends React.Component<PropsInterface, StateInterface>{
                 array_aux[idx].selected = e.currentTarget.checked
                 // this.setState({ allUsers: array_aux })
                 // 2/5 REDUX REDUX REDUX REDUX :-)
-                this.props.addAllContacts(array_aux)
-                console.log(this.state.allUsers)
-              //  this.props.addContactDB(userId, array_aux[idx]._id)
+                //this.props.addAllContacts(array_aux)
+                // console.log(this.state.allUsers)
+
+                this.props.addContactDB(this.props.userId, this.props.username, array_aux[idx]._id, array_aux[idx].username)
             }
         }
         else {
@@ -68,6 +71,7 @@ export class Right extends React.Component<PropsInterface, StateInterface>{
         }
     }
 
+    //on sumbit the modal form to search for contacts... (it is not the red close button)
     onSubmit(e: React.FormEvent<EventTarget>) {
         e.preventDefault()
 
@@ -79,6 +83,7 @@ export class Right extends React.Component<PropsInterface, StateInterface>{
                 })
                 // this.setState({ allUsers })
                 // 3/5 REDUX REDUX REDUX REDUX :-)
+                // pupulates the found users list
                 this.props.addAllContacts(allUsers)
                 console.log(this.state)
             }
@@ -105,7 +110,7 @@ export class Right extends React.Component<PropsInterface, StateInterface>{
         return (
             <div>
                 <button className="btn btn-primary btn-md" data-toggle="modal" data-target="#myModal">
-                    Update List of Contacts
+                    Manage List of Contacts
                 </button>
                 <div className="modal fade" id="myModal">
                     <div className="modal-dialog">
@@ -124,7 +129,7 @@ export class Right extends React.Component<PropsInterface, StateInterface>{
                                         type="text"
                                         name="Enter name"
                                         onChange={this.onChangeSearch}
-                                        className="form-control" />
+                                        className="form-control" required />
                                     <br />
                                     <button className="btn btn-primary btn-md">
                                         Search Contacts
@@ -174,34 +179,25 @@ import axios from "axios"
 
 const mapDispatchToProps = (dispatch: Function) => {
     return {
-        
+
         userlist: (searchTerm: string) => axios.post("/api/users/userlist/", { searchParam: searchTerm }),
-        addContactDB: (userId: string, contactId:string) => axios.post("/api/users/add/", { userId, contactId  }),
-        removeContactDB: (userId: string, contactId:string) => axios.post("/api/users/add/", { userId, contactId  }),
-        addAllContacts: (allUsers: Array<{ _id: string, username: string, selected: boolean }>) => dispatch({ type: "ADD_CONTACTS", payload: { allUsers } })
+        addContactDB: (userId: string, username: string, contactId: string, contactName:string) => axios.post("/api/users/add/", { userId, username, contactId, contactName })
+            .then((response) => {
+                if (response.data.ok == "ok")
+                    console.log("successfully saved")
+            }),
+
+        removeContactDB: (userId: string, contactId: string) => axios.post("/api/users/add/", { userId, contactId }),
+        addAllContacts: (allUsers: Array<{ _id: string, username: string, selected: boolean }>) => dispatch({ type: "ADD_USERS", payload: { allUsers } })
     }
 }
 
 const mapStateToProps = (state: any) => {
     return {
         users: state.allUsersInState,
+        userId: state.idLoggedUser,
+        username: state.nameLoggedUser
     };
 };
-
-// export function userlist(searchTerm:string) {
-//     return (dispatch:Function) => {
-//         return axios.post("/api/users/userlist/",{searchParam:searchTerm})
-//     }
-
-// const mapDispatchToProps = dispatch => {
-//     return {
-//         onIncrementCounter: () => dispatch({type: actionTypes.INCREMENT}),
-//         onDecrementCounter: () => dispatch({type: actionTypes.DECREMENT}),
-//         onAddCounter: () => dispatch({type: actionTypes.ADD, val: 10}),
-//         onSubtractCounter: () => dispatch({type: actionTypes.SUBTRACT, val: 15}),
-//         onStoreResult: (result) => dispatch({type: actionTypes.STORE_RESULT, result: result}),
-//         onDeleteResult: (id) => dispatch({type: actionTypes.DELETE_RESULT, resultElId: id})
-//     }
-// };
 
 export default connect<{}, {}, {}>(mapStateToProps, mapDispatchToProps)(Right)
