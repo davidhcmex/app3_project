@@ -10,18 +10,30 @@ interface StateInterface {
 
 }
 
-interface PropsInterface {
+interface p {
+
+
+    userId: string,
+    username: string,
+    users: Array<{ _id: string, username: string, selected: boolean }>,
+
+
+}
+
+interface d {
     userlist: any,
     addAllContacts: any,
     addContactDB: any,
     removeContactDB: any,
-    userId: string,
-    username:string,
-    users: Array<{ _id: string, username: string, selected: boolean }>
-
+    unsetUserId: any
 }
 
-export class Right extends React.Component<PropsInterface, StateInterface>{
+interface owned {
+    socket: SocketIOClient.Socket,
+    history: any,
+}
+
+export class Right extends React.Component<p & d & owned, StateInterface>{
 
     constructor(props: any) {
         super(props)
@@ -52,11 +64,11 @@ export class Right extends React.Component<PropsInterface, StateInterface>{
         if (e.currentTarget.checked) {
             if (confirm("You sure you want to add this contact from your list?")) {
                 //  let array_aux = this.state.allUsers.slice()
-                // 1/5 REDUX REDUX REDUX REDUX :-)
+                // 1/4 REDUX REDUX REDUX REDUX :-)
                 let array_aux = this.props.users.slice()
                 array_aux[idx].selected = e.currentTarget.checked
                 // this.setState({ allUsers: array_aux })
-                // 2/5 REDUX REDUX REDUX REDUX :-)
+                // 2/4 REDUX REDUX REDUX REDUX :-)
                 //this.props.addAllContacts(array_aux)
                 // console.log(this.state.allUsers)
 
@@ -82,7 +94,7 @@ export class Right extends React.Component<PropsInterface, StateInterface>{
                     return { ...user, selected: false }
                 })
                 // this.setState({ allUsers })
-                // 3/5 REDUX REDUX REDUX REDUX :-)
+                // 3/4 REDUX REDUX REDUX REDUX :-)
                 // pupulates the found users list
                 this.props.addAllContacts(allUsers)
                 console.log(this.state)
@@ -99,11 +111,16 @@ export class Right extends React.Component<PropsInterface, StateInterface>{
 
     }
 
-    handleChat = (e: React.FormEvent<HTMLButtonElement>) => {
+    Logout = () => {
 
-        console.log(e.currentTarget.id)
-
+        if (confirm("You sure you want to logout?")) {
+            console.log("disconnecting...")
+            this.props.socket.disconnect()
+            this.props.unsetUserId()
+            this.props.history.push("/login")
+        }
     }
+
 
 
     render() {
@@ -138,7 +155,7 @@ export class Right extends React.Component<PropsInterface, StateInterface>{
                                     <ul className="list-group">
                                         {/* {(this.state.allUsers).map((d, idx) => { */}
 
-                                        {/* 4/5 REDUX REDUX REDUX REDUX REDUX */}
+                                        {/* 4/4 REDUX REDUX REDUX REDUX REDUX */}
                                         {(this.props.users).map((d: any, idx: any) => {
 
                                             return (<li key={idx} className="list-group-item"><input type="checkbox" onChange={this.onChange(idx)} id={d._id} />{d.username}</li>)
@@ -154,16 +171,10 @@ export class Right extends React.Component<PropsInterface, StateInterface>{
                         </div>
                     </div>
                 </div>
-                {/* 5/5 REDUX REDUX REDUX REDUX REDUX */}
-                {/* {(this.state.allUsers).map((d, idx) => { */}
-                {/* {(this.props.users).map((d, idx) => {
-                    if (d.selected) {
-                        let li_value = "Contact: ".concat(d.username)
-                        return (<button onClick={this.handleChat} className="btn btn-info" key={idx} id={d._id}>{li_value}</button>)
-                    }
-                    else
-                        return
-                })} */}
+                <button className="btn btn-primary btn-md" onClick={this.Logout}>
+                    Logout
+                </button>
+              
 
 
             </div>
@@ -181,14 +192,15 @@ const mapDispatchToProps = (dispatch: Function) => {
     return {
 
         userlist: (searchTerm: string) => axios.post("/api/users/userlist/", { searchParam: searchTerm }),
-        addContactDB: (userId: string, username: string, contactId: string, contactName:string) => axios.post("/api/users/add/", { userId, username, contactId, contactName })
+        addContactDB: (userId: string, username: string, contactId: string, contactName: string) => axios.post("/api/users/add/", { userId, username, contactId, contactName })
             .then((response) => {
                 if (response.data.ok == "ok")
                     console.log("successfully saved")
             }),
 
         removeContactDB: (userId: string, contactId: string) => axios.post("/api/users/add/", { userId, contactId }),
-        addAllContacts: (allUsers: Array<{ _id: string, username: string, selected: boolean }>) => dispatch({ type: "ADD_USERS", payload: { allUsers } })
+        addAllContacts: (allUsers: Array<{ _id: string, username: string, selected: boolean }>) => dispatch({ type: "ADD_USERS", payload: { allUsers } }),
+        unsetUserId: () => dispatch({ type: "UNSET_USER_ID" })
     }
 }
 
@@ -200,4 +212,4 @@ const mapStateToProps = (state: any) => {
     };
 };
 
-export default connect<{}, {}, {}>(mapStateToProps, mapDispatchToProps)(Right)
+export default connect<p, d, owned>(mapStateToProps, mapDispatchToProps)(Right)

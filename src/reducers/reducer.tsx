@@ -41,6 +41,15 @@ const reducer = (state = initialState, action: payloadInterface) => {
         }
     }
 
+    if (action.type === 'UNSET_USER_ID') {
+
+        return {
+            ...state,
+            idLoggedUser: "",
+            nameLoggedUser: ""
+        }
+    }
+
     if (action.type === 'ADD_CONTACTS') {
 
         return {

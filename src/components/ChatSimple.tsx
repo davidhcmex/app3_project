@@ -10,7 +10,7 @@ interface stateInterface {
  
     message: string,
     status: string,
-    
+    uiUsername:string,
     the_messages: Array<{ name: string, message: string }>
 
 }
@@ -31,7 +31,7 @@ export class Chat extends React.Component<PropsInterface & p, stateInterface> {
       
             message: "",
             status: "",
-            
+            uiUsername: "",
             the_messages: [{ name: "", message: "" }],
 
         }
@@ -106,7 +106,8 @@ export class Chat extends React.Component<PropsInterface & p, stateInterface> {
                         <form onSubmit={this.onSubmit}>
 
                             <div className="form-group">
-                                <label className="control-label">Logged User {this.props.username}</label>
+                                <label className="control-label">Logged User:</label>
+                                <p><strong> {this.props.username} </strong ></p>
                          
 
                             </div>

@@ -4,6 +4,8 @@ import Left from "./Left";
 import Right from "./Right";
 import * as openSocket from 'socket.io-client';
 import  Logged  from "./Logged";
+import { RouteComponentProps } from "react-router";
+
 
 interface stateProps {
     socket:SocketIOClient.Socket
@@ -11,7 +13,7 @@ interface stateProps {
 
 
 // Home is a Route and is also called by Root
-export class ChatComposed extends React.Component<{},stateProps> {
+export class ChatComposed extends React.Component<RouteComponentProps<{}>,stateProps> {
 
     constructor(props: any) {
         super(props)
@@ -43,7 +45,7 @@ export class ChatComposed extends React.Component<{},stateProps> {
                     </article>
                     <aside className="sidebar2" >
 
-                        <Right />
+                        <Right socket={this.state.socket} history={this.props.history}/>
                     </aside>
                 </div>
                 <footer>
