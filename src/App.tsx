@@ -4,15 +4,15 @@ import './bootstrap.min.css';
 
 //import {Vehicle} from './Vehicle';
 
-import { Route, BrowserRouter } from "react-router-dom";
+import { Route, BrowserRouter, Switch } from "react-router-dom";
 
 
 import { Register } from "./components/Register";
-import { User } from "./components/User";
+// import { User } from "./components/User";
 import { Login } from "./components/Login";
 
-import { Header } from "./components/Header";
-import { ChatComposed }  from "./components/ChatComposed";
+//import { Header } from "./components/Header";
+import { ChatComposed } from "./components/ChatComposed";
 
 
 
@@ -24,14 +24,12 @@ class App extends React.Component {
         return (
             <BrowserRouter>
                 <div>
-
-                    <Route path={"/"} component={Header} />
-                    <Route path={"/register"} component={Register} />
-                    <Route path={"/login"} component={Login} />
-                    <Route path={"/user/:id"} component={User} />
-                   
-                    <Route path={"/chat"} component={ChatComposed} />
-
+                    <Switch>
+                        <Route exact path={"/"} component={Login} />
+                        <Route path={"/register"} component={Register} />
+                        <Route path={"/login"} component={Login} />
+                        <Route path={"/chat"} component={ChatComposed} />
+                    </Switch>
                 </div>
             </BrowserRouter>
         );

@@ -25,7 +25,9 @@ interface d {
     addAllContacts: any,
     addContactDB: any,
     removeContactDB: any,
-    unsetUserId: any
+    unsetUserId: any,
+    updateContactsUI: any,
+    unsetContacts: any
 }
 
 interface owned {
@@ -63,16 +65,16 @@ export class Right extends React.Component<p & d & owned, StateInterface>{
 
         if (e.currentTarget.checked) {
             if (confirm("You sure you want to add this contact from your list?")) {
-                //  let array_aux = this.state.allUsers.slice()
-                // 1/4 REDUX REDUX REDUX REDUX :-)
+
                 let array_aux = this.props.users.slice()
                 array_aux[idx].selected = e.currentTarget.checked
-                // this.setState({ allUsers: array_aux })
-                // 2/4 REDUX REDUX REDUX REDUX :-)
-                //this.props.addAllContacts(array_aux)
-                // console.log(this.state.allUsers)
 
-                this.props.addContactDB(this.props.userId, this.props.username, array_aux[idx]._id, array_aux[idx].username)
+                // add the contact, on response the contact should be added to the left contacts
+                // list
+                this.props.addContactDB(this.props.userId, this.props.username, array_aux[idx]._id, array_aux[idx].username) 
+                this.props.updateContactsUI(this.props.userId, this.props.username, array_aux[idx]._id, array_aux[idx].username)
+                console.log("calling redux")
+                
             }
         }
         else {
@@ -97,7 +99,7 @@ export class Right extends React.Component<p & d & owned, StateInterface>{
                 // 3/4 REDUX REDUX REDUX REDUX :-)
                 // pupulates the found users list
                 this.props.addAllContacts(allUsers)
-                console.log(this.state)
+
             }
         )
 
@@ -106,7 +108,7 @@ export class Right extends React.Component<p & d & owned, StateInterface>{
     // to use the right context
     updateContacts = () => {
 
-        console.log(this.state)
+        console.log("pressed red button")
 
 
     }
@@ -117,6 +119,7 @@ export class Right extends React.Component<p & d & owned, StateInterface>{
             console.log("disconnecting...")
             this.props.socket.disconnect()
             this.props.unsetUserId()
+            this.props.unsetContacts()
             this.props.history.push("/login")
         }
     }
@@ -174,7 +177,7 @@ export class Right extends React.Component<p & d & owned, StateInterface>{
                 <button className="btn btn-primary btn-md" onClick={this.Logout}>
                     Logout
                 </button>
-              
+
 
 
             </div>
@@ -193,14 +196,20 @@ const mapDispatchToProps = (dispatch: Function) => {
 
         userlist: (searchTerm: string) => axios.post("/api/users/userlist/", { searchParam: searchTerm }),
         addContactDB: (userId: string, username: string, contactId: string, contactName: string) => axios.post("/api/users/add/", { userId, username, contactId, contactName })
-            .then((response) => {
-                if (response.data.ok == "ok")
-                    console.log("successfully saved")
+            .then((response: any) => {
+                if (response.data.ok == "ok") {
+                    return ("success")
+                }
+                else {
+                    return ("failure")
+                }
             }),
 
         removeContactDB: (userId: string, contactId: string) => axios.post("/api/users/add/", { userId, contactId }),
         addAllContacts: (allUsers: Array<{ _id: string, username: string, selected: boolean }>) => dispatch({ type: "ADD_USERS", payload: { allUsers } }),
-        unsetUserId: () => dispatch({ type: "UNSET_USER_ID" })
+        unsetUserId: () => dispatch({ type: "UNSET_USER_ID" }),
+        unsetContacts: () => dispatch({ type: "UNSET_CONTACTS" }),
+        updateContactsUI: (userId: string, usernamec: string, contactId: string, contactName: string) => dispatch({ type: "ADD_USERUID", payload: { userId, usernamec, contactId, contactName } })
     }
 }
 

@@ -36,6 +36,7 @@ router.post("/", function (req, res) {
     req.checkBody("email", "Email Format is required").isEmail();
     req.checkBody("password", "Password is required").notEmpty();
     req.checkBody("passwordConfirmation", "Password Conf is required").notEmpty();
+    req.checkBody("passwordConfirmation", "Passwords do not match").equals(req.body.password);
     var errors = req.validationErrors();
     if (errors) {
         console.log(errors);
@@ -144,7 +145,7 @@ router.post("/login", function (req, res, next) {
                         }, jwtconfig_1.default.jwtSecret);
                         //   res.json({token})
                         //res.send({ token: token, isValid: true })
-                        res.cookie("auth", token, { httpOnly: true });
+                        res.cookie("auth", token, { httpOnly: true, sameSite: true });
                         res.send({ isValid: true, id: user._id, username: user.username });
                     }
                     else {
