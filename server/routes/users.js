@@ -5,6 +5,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express = require("express");
 //var expressValidator = require("express-validator");
 var expressValidator = require("express-validator");
+var Conversation = require("../models/conversations");
 var router = express.Router();
 var User = require("../models/users");
 var Contact = require("../models/contacts");
@@ -56,11 +57,17 @@ router.post("/", function (req, res) {
                     console.log(err);
                 }
                 newUser_1.password = hash;
-                newUser_1.save(function (err) {
+                newUser_1.save(function (err, doc) {
+                    //  console.log("nuevo", doc._id)
                     if (err) {
                         console.log(err);
                         return;
                     }
+                    // CREATING a conversation for ALL the contacts (ALL contacts in a general room)
+                    Conversation.findOneAndUpdate({ "creator": doc._id }, { $set: { "creator": doc._id, "gral": true }, $push: { "members": doc._id } }, { upsert: true, returnNewDocument: true }, function (err, doc) {
+                        console.log("after upsert");
+                        //  console.log(doc)
+                    });
                     // else {
                     //    // req.flash("success", "You are now registered and can log in");
                     //     res.redirect("/users/login");
@@ -70,24 +77,62 @@ router.post("/", function (req, res) {
         });
     }
 });
+// updating the global conversation and creating a 1:1 conversation
+router.post("/addconversation", function (req, res, next) {
+    Conversation.findOneAndUpdate({ $and: [{ "creator": req.body.userId }, { "gral": true }] }, //{ $and:"creator": req.body.userId }, 
+    { $set: { "creator": req.body.userId }, $push: { "members": req.body.contactId } }, { upsert: true, returnNewDocument: true }, function (err, doc) {
+        console.log("after upsert1");
+        //  console.log(doc)
+        var newConversation = new Conversation({
+            creator: req.body.userId,
+            members: [req.body.userId, req.body.contactId],
+            gral: false
+        });
+        newConversation.save(function (err, doc) {
+            console.log(err);
+            var newContact = new Contact({
+                user: req.body.userId,
+                username: req.body.userName,
+                contact: req.body.contactId,
+                contactname: req.body.contactName,
+                conversationId: doc._id
+            });
+            newContact.save(function (err) {
+                newContact = new Contact({
+                    user: req.body.contactId,
+                    username: req.body.contactName,
+                    contact: req.body.userId,
+                    contactname: req.body.userName,
+                    conversationId: doc._id
+                });
+                newContact.save(function (err) {
+                    if (!(err))
+                        res.send({ "ok": "ok" });
+                    else
+                        (console.log(err));
+                });
+            });
+        });
+    });
+});
 router.post("/userlist", function (req, res, next) {
     // const username = req.body.username;
     // const password = req.body.password;
-    console.log(req.body);
+    // console.log(req.body)
     User.find((req.body.searchParam) ? { username: { $regex: req.body.searchParam, $options: "i" } } : {}).
         limit(5).
         select('username').exec(function (err, users) {
-        console.log(users);
+        // console.log(users)
         res.send(users);
     });
 });
 router.post("/contactlist", function (req, res, next) {
     // const username = req.body.username;
     // const password = req.body.password;
-    console.log(req.body);
     Contact.find({ user: req.body.userIdParam }).exec(function (err, contacts) {
         console.log("ACA");
-        console.log(contacts);
+        // console.log(contacts)
+        //console.log({...contacts,a:1}) //{ ...user, selected: false }
         res.send(contacts);
     });
 });
@@ -123,7 +168,7 @@ router.post("/login", function (req, res, next) {
     }
     else {
         var query = { username: username };
-        console.log(query);
+        //  console.log(query)
         var errors_1 = {};
         User.findOne(query, function (err, user) {
             if (err)
@@ -135,7 +180,7 @@ router.post("/login", function (req, res, next) {
             }
             else {
                 //match password
-                console.log(user);
+                // console.log(user)
                 bcrypt.compare(password, user.password, function (err, isMatch) {
                     if (isMatch) {
                         console.log("Password Matchoo");

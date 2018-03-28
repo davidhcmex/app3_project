@@ -3,6 +3,7 @@
 import * as express from "express"
 //var expressValidator = require("express-validator");
 import * as expressValidator from "express-validator"
+let Conversation = require("../models/conversations");
 let router = express.Router();
 let User = require("../models/users");
 let Contact = require("../models/contacts");
@@ -65,11 +66,23 @@ router.post("/", function (req, res) {
                     console.log(err);
                 }
                 newUser.password = hash;
-                newUser.save(function (err: any) {
+                newUser.save((err: any, doc: any) => {
+                  //  console.log("nuevo", doc._id)
                     if (err) {
                         console.log(err);
                         return;
                     }
+                    // CREATING a conversation for ALL the contacts (ALL contacts in a general room)
+                    Conversation.findOneAndUpdate(
+                        { "creator": doc._id },
+                        { $set: { "creator": doc._id, "gral": true }, $push: { "members": doc._id } },
+                        { upsert: true, returnNewDocument: true }, function (err: any, doc: any) {
+                            console.log("after upsert")
+                          //  console.log(doc)
+                        }
+                    );
+
+
                     // else {
                     //    // req.flash("success", "You are now registered and can log in");
                     //     res.redirect("/users/login");
@@ -80,15 +93,64 @@ router.post("/", function (req, res) {
     }
 })
 
+// updating the global conversation and creating a 1:1 conversation
+router.post("/addconversation", function (req, res, next) {
+
+    Conversation.findOneAndUpdate(
+        { $and: [{ "creator": req.body.userId }, { "gral": true }] },//{ $and:"creator": req.body.userId }, 
+        { $set: { "creator": req.body.userId }, $push: { "members": req.body.contactId } },
+        { upsert: true, returnNewDocument: true }, function (err: any, doc: any) {
+            console.log("after upsert1")
+         //  console.log(doc)
+            let newConversation = new Conversation({
+                creator: req.body.userId,
+                members: [req.body.userId, req.body.contactId],
+                gral: false
+            })
+            newConversation.save((err: any, doc: any) => {
+                console.log(err)
+                let newContact = new Contact({
+                    user: req.body.userId,
+                    username: req.body.userName,
+                    contact: req.body.contactId,
+                    contactname: req.body.contactName,
+                    conversationId:doc._id
+                })
+
+                newContact.save((err: any) => {
+                    newContact = new Contact({
+                        user: req.body.contactId,
+                        username: req.body.contactName,
+                        contact: req.body.userId,
+                        contactname: req.body.userName,
+                        conversationId:doc._id
+                    })
+                    newContact.save((err: any) => {
+                        if (!(err))
+                            res.send({ "ok": "ok" })
+                        else
+                            (console.log(err))
+                    });
+                })
+            }
+            );
+
+        }
+    );
+
+
+})
+
+
 router.post("/userlist", function (req, res, next) {
     // const username = req.body.username;
     // const password = req.body.password;
 
-    console.log(req.body)
+   // console.log(req.body)
     User.find((req.body.searchParam) ? { username: { $regex: req.body.searchParam, $options: "i" } } : {}).
         limit(5).
         select('username').exec(function (err: any, users: any) {
-            console.log(users)
+           // console.log(users)
             res.send(users)
         });
 })
@@ -98,10 +160,11 @@ router.post("/contactlist", function (req, res, next) {
     // const username = req.body.username;
     // const password = req.body.password;
 
-    console.log(req.body)
+
     Contact.find({ user: req.body.userIdParam }).exec(function (err: any, contacts: any) {
         console.log("ACA")
-        console.log(contacts)
+       // console.log(contacts)
+        //console.log({...contacts,a:1}) //{ ...user, selected: false }
         res.send(contacts)
     });
 })
@@ -121,7 +184,7 @@ router.post("/add", function (req, res, next) {
     newContact.save(function (err: any) {
         if (!(err))
             res.send({ "ok": "ok" })
-            else
+        else
             (console.log(err))
     });
 })
@@ -147,7 +210,7 @@ router.post("/login", function (req, res, next) {
     else {
 
         let query = { username: username };
-        console.log(query)
+      //  console.log(query)
         let errors = {}
         User.findOne(query, function (err: any, user: any) {
             if (err) throw err;
@@ -160,7 +223,7 @@ router.post("/login", function (req, res, next) {
             }
             else {
                 //match password
-                console.log(user)
+                // console.log(user)
                 bcrypt.compare(password, user.password, function (err, isMatch) {
                     if (isMatch) {
                         console.log("Password Matchoo")
@@ -173,9 +236,9 @@ router.post("/login", function (req, res, next) {
 
                         //res.send({ token: token, isValid: true })
 
-                        res.cookie("auth", token, { httpOnly: true, sameSite:true });
-                        
-                        res.send({ isValid: true, id: user._id, username:user.username });
+                        res.cookie("auth", token, { httpOnly: true, sameSite: true });
+
+                        res.send({ isValid: true, id: user._id, username: user.username });
 
                     }
                     else {

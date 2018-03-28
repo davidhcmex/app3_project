@@ -7,7 +7,6 @@ var ContactSchema = mongoosec.Schema({
         type: String,
         required: true
     },
-    //the name of the user that is logged in
     username: {
         type: String,
         required: true
@@ -17,6 +16,10 @@ var ContactSchema = mongoosec.Schema({
         required: true
     },
     contactname: {
+        type: String,
+        required: true
+    },
+    conversationId: {
         type: String,
         required: true
     }

@@ -22,7 +22,7 @@ interface p {
 
 interface d {
     userlist: any,
-    addAllContacts: any,
+    addAllContactsToChoose: any,
     addContactDB: any,
     removeContactDB: any,
     unsetUserId: any,
@@ -71,7 +71,7 @@ export class Right extends React.Component<p & d & owned, StateInterface>{
 
                 // add the contact, on response the contact should be added to the left contacts
                 // list
-                this.props.addContactDB(this.props.userId, this.props.username, array_aux[idx]._id, array_aux[idx].username) 
+                this.props.addContactDB(this.props.userId, this.props.username, array_aux[idx]._id, array_aux[idx].username )
                 this.props.updateContactsUI(this.props.userId, this.props.username, array_aux[idx]._id, array_aux[idx].username)
                 console.log("calling redux")
                 
@@ -98,7 +98,7 @@ export class Right extends React.Component<p & d & owned, StateInterface>{
                 // this.setState({ allUsers })
                 // 3/4 REDUX REDUX REDUX REDUX :-)
                 // pupulates the found users list
-                this.props.addAllContacts(allUsers)
+                this.props.addAllContactsToChoose(allUsers)
 
             }
         )
@@ -195,7 +195,7 @@ const mapDispatchToProps = (dispatch: Function) => {
     return {
 
         userlist: (searchTerm: string) => axios.post("/api/users/userlist/", { searchParam: searchTerm }),
-        addContactDB: (userId: string, username: string, contactId: string, contactName: string) => axios.post("/api/users/add/", { userId, username, contactId, contactName })
+        addContactDB: (userId: string, userName:string, contactId: string, contactName:string) => axios.post("/api/users/addconversation/", { userId, userName, contactId, contactName })
             .then((response: any) => {
                 if (response.data.ok == "ok") {
                     return ("success")
@@ -206,7 +206,7 @@ const mapDispatchToProps = (dispatch: Function) => {
             }),
 
         removeContactDB: (userId: string, contactId: string) => axios.post("/api/users/add/", { userId, contactId }),
-        addAllContacts: (allUsers: Array<{ _id: string, username: string, selected: boolean }>) => dispatch({ type: "ADD_USERS", payload: { allUsers } }),
+        addAllContactsToChoose: (allUsers: Array<{ _id: string, username: string, selected: boolean }>) => dispatch({ type: "ADD_USERS", payload: { allUsers } }),
         unsetUserId: () => dispatch({ type: "UNSET_USER_ID" }),
         unsetContacts: () => dispatch({ type: "UNSET_CONTACTS" }),
         updateContactsUI: (userId: string, usernamec: string, contactId: string, contactName: string) => dispatch({ type: "ADD_USERUID", payload: { userId, usernamec, contactId, contactName } })

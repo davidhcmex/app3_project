@@ -34,7 +34,7 @@ export class ChatComposed extends React.Component<RouteComponentProps<{}>,stateP
                         <h2>Users Logged Now</h2>
                         <Logged socket={this.state.socket}/>
                         <h2>Users in Contacts</h2>
-                        <Left />
+                        <Left socket={this.state.socket}/>
                     </aside>
 
 

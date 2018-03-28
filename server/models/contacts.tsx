@@ -5,11 +5,11 @@ const mongoosec = require ("mongoose");
 const ContactSchema = mongoosec.Schema({
     // the id of the user that is logged in
     user : {
-        type:String,
+        type: String,
         required:true
     },
 
-    //the name of the user that is logged in
+    
     username : {
         type:String,
         required:true
@@ -23,7 +23,14 @@ const ContactSchema = mongoosec.Schema({
     contactname : {
         type:String,
         required:true
+    },
+
+    conversationId: {
+        type:String,
+        required:true
     }
+
+
 
 
 },{collection:"UsersContacts"})
