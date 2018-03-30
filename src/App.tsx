@@ -12,7 +12,7 @@ import { Register } from "./components/Register";
 import { Login } from "./components/Login";
 
 //import { Header } from "./components/Header";
-import { ChatComposed } from "./components/ChatComposed";
+import  ChatComposed  from "./components/ChatComposed";
 
 
 

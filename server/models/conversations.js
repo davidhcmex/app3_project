@@ -12,6 +12,13 @@ var ConversationSchema = mongoosed.Schema({
         type: Boolean,
         required: true
     },
+    // comments: [{
+    //     text: String,
+    //     postedBy: {
+    //         type: mongoose.Schema.Types.ObjectId,
+    //         ref: 'User'
+    //     }
+    // }]
     members: [{ type: mongoosed.Schema.Types.ObjectId, ref: 'User' }],
 }, { collection: "conversations" });
 var Conversation = module.exports = mongoosed.model("Conversations", ConversationSchema);

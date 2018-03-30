@@ -80,7 +80,18 @@ router.post("/", function (req, res) {
 // updating the global conversation and creating a 1:1 conversation
 router.post("/addconversation", function (req, res, next) {
     Conversation.findOneAndUpdate({ $and: [{ "creator": req.body.userId }, { "gral": true }] }, //{ $and:"creator": req.body.userId }, 
-    { $set: { "creator": req.body.userId }, $push: { "members": req.body.contactId } }, { upsert: true, returnNewDocument: true }, function (err, doc) {
+    { $set: { "creator": req.body.userId }, $push: { "members": req.body.contactId } }, 
+    // { $set: { "creator": req.body.userId, "members": [req.body.userId, req.body.contactId] } },
+    { upsert: false, returnNewDocument: true }, function (err, doc) {
+        if (!doc) {
+            console.log("just once");
+            var newConversation_1 = new Conversation({
+                creator: req.body.userId,
+                members: [req.body.userId, req.body.contactId],
+                gral: true
+            });
+            newConversation_1.save();
+        }
         console.log("after upsert1");
         //  console.log(doc)
         var newConversation = new Conversation({
@@ -114,25 +125,84 @@ router.post("/addconversation", function (req, res, next) {
             });
         });
     });
+    // Conversation.findOneAndUpdate(
+    //     { $and: [{ "creator": req.body.userId }, { "gral": true }] },//{ $and:"creator": req.body.userId }, 
+    //      //{ $set: { "creator": req.body.userId }, $push: { "members": req.body.contactId } },
+    //     { $set: { "creator": req.body.userId, "members": [req.body.userId, req.body.contactId] } },
+    //     { upsert: true, returnNewDocument: true }, function (err: any, doc: any) {
+    //         console.log("after upsert1")
+    //         //  console.log(doc)
+    //         let newConversation = new Conversation({
+    //             creator: req.body.userId,
+    //             members: [req.body.userId, req.body.contactId],
+    //             gral: false
+    //         })
+    //         newConversation.save((err: any, doc: any) => {
+    //             console.log(err)
+    //             let newContact = new Contact({
+    //                 user: req.body.userId,
+    //                 username: req.body.userName,
+    //                 contact: req.body.contactId,
+    //                 contactname: req.body.contactName,
+    //                 conversationId: doc._id
+    //             })
+    //             newContact.save((err: any) => {
+    //                 newContact = new Contact({
+    //                     user: req.body.contactId,
+    //                     username: req.body.contactName,
+    //                     contact: req.body.userId,
+    //                     contactname: req.body.userName,
+    //                     conversationId: doc._id
+    //                 })
+    //                 newContact.save((err: any) => {
+    //                     if (!(err))
+    //                         res.send({ "ok": "ok" })
+    //                     else
+    //                         (console.log(err))
+    //                 });
+    //             })
+    //         }
+    //         );
+    //     }
+    // );
+});
+//get the conversations (or groups) that userID belongs to
+//(there is always a member = userID), after this ending
+//point, we "getnames" (the next ending point)
+router.post("/getgroups", function (req, res, next) {
+    console.log("aca");
+    Conversation.find({
+        $and: [{ members: { $elemMatch: { $eq: req.body.userId } } },
+            { "gral": true }]
+    })
+        .select('_id').exec(function (err, otherGroupsIds) {
+        console.log("Other");
+        console.log(otherGroupsIds);
+        res.send(otherGroupsIds);
+    });
+});
+router.post("/getnames", function (req, res, next) {
+    console.log(req.body.arrayOfIds);
+    // Conversation.find({ "_id": req.body.arrayOfIds[0]._id }).
+    req.body.arrayOfIds.map(function (elem) {
+        return Conversation.find({ "_id": elem }, { _id: 1 })
+            .populate("members", { username: 1, email: 1 })
+            .exec(function (err, rec) {
+            console.log(JSON.stringify(rec, null, "\t"));
+            res.send(rec);
+        });
+    });
+    //   res.send(rec))
 });
 router.post("/userlist", function (req, res, next) {
-    // const username = req.body.username;
-    // const password = req.body.password;
-    // console.log(req.body)
     User.find((req.body.searchParam) ? { username: { $regex: req.body.searchParam, $options: "i" } } : {}).
         limit(5).
         select('username').exec(function (err, users) {
-        // console.log(users)
         res.send(users);
     });
 });
 router.post("/contactlist", function (req, res, next) {
-    // const username = req.body.username;
-    // const password = req.body.password;
     Contact.find({ user: req.body.userIdParam }).exec(function (err, contacts) {
-        console.log("ACA");
-        // console.log(contacts)
-        //console.log({...contacts,a:1}) //{ ...user, selected: false }
         res.send(contacts);
     });
 });

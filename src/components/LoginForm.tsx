@@ -23,7 +23,7 @@ interface ErrorsInterface extends StateInterface {
 }
 
 
-class LoginForm extends React.Component<{ login: any, history: any, setUserId: any }, ErrorsInterface> {
+class LoginForm extends React.Component<d2p&{ login: any, history: any, setUserId: any }, ErrorsInterface> {
 
     //class LoginForm extends React.Component<RouteComponentProps<{id:string}>, ErrorsInterface> {
     constructor(props: any) {
@@ -65,10 +65,14 @@ class LoginForm extends React.Component<{ login: any, history: any, setUserId: a
                     // setAuthorizationToken(token)
                     // console.log(jwt.decode(token))
 
-                  
+
                     // REDUX REDUX REDUX REDUX
                     console.log(response.data.username)
-                    this.props.setUserId(response.data.id,response.data.username)
+                    this.props.setUserId(response.data.id, response.data.username)
+
+                    // DAVID Apr-2  this is needed to add a chat window to those already existent
+                    this.props.setChatsNumber()
+
                     this.setState({ errors: [{ param: "Ok", msg: ".. Redirecting to login page", value: "" }], isValid: false })
                     setTimeout(() => this.props.history.push("/chat"), 2000)
 
@@ -80,7 +84,7 @@ class LoginForm extends React.Component<{ login: any, history: any, setUserId: a
             }
         )
 
-    
+
     }
 
     onChange(e: React.FormEvent<EventTarget>) {
@@ -138,19 +142,23 @@ class LoginForm extends React.Component<{ login: any, history: any, setUserId: a
         )
     }
 }
+interface d2p {
+    setChatsNumber: () => (any)
+}
 
 
 const mapDispatchToProps = (dispatch: Function) => {
     return {
-        login: (data: {username:string, password:string}) => axios.post("/api/users/login/", { username: data.username, password: data.password }),
-        setUserId: (id: string, username:string) => dispatch({ type: "SET_USER_ID", payload: {username,id} })
+        login: (data: { username: string, password: string }) => axios.post("/api/users/login/", { username: data.username, password: data.password }),
+        setUserId: (id: string, username: string) => dispatch({ type: "SET_USER_ID", payload: { username, id } }),
+        setChatsNumber: () => dispatch({ type: "SET_CHATNUMBER" })
     }
 }
 
 
 //addAllContacts: (allUsers: Array<{ _id: string, username: string, selected: boolean }>) => dispatch({ type: "ADD_CONTACTS", payload: { allUsers } })
 
-export default connect<{}, {}, { history: any }>(null, mapDispatchToProps)(LoginForm)
+export default connect<{}, d2p, { history: any }>(null, mapDispatchToProps)(LoginForm)
 
 
 

@@ -3,7 +3,9 @@ import { connect } from "react-redux"
 
 
 interface ClassState {
-
+    groupConversationId: string,
+    members: any,
+    OwnedGroupRoomId: Array<{ _id: string }>
     contacts: Array<{ _id: string, user: string, contact: string, username: string, contactname: string, conversationId: string }>
 
 }
@@ -13,10 +15,11 @@ export class Left extends React.Component<connected_p, ClassState> {
     constructor(props: any) {
         super(props)
         this.state = {
-
+            groupConversationId: "",
+            OwnedGroupRoomId: [{ _id: "" }],
             contacts: [],
+            members: []
 
-            // selectedUsers: [{ _id: "", username: "" }],
         }
     }
 
@@ -28,32 +31,66 @@ export class Left extends React.Component<connected_p, ClassState> {
         console.log(this.props)
 
         // call the server-side function 'adduser' and send one parameter (value of prompt)
-        this.props.socket.emit('addconversation', { room_name, user_name:this.props.nameLoggedUser });
+        //    => OUT SETUP
 
+        this.props.socket.emit('addconversation', { room_name, user_name: this.props.nameLoggedUser });
 
-        this.props.socket.on(e.currentTarget.id,
-            (data: any) => {
-                console.log("private conversation established")
-                console.log(data)
-            })
+        // DAVID Apr-2 room_name has to be put in redux so that the chat component know where to START
+        this.props.setRoom(room_name)
 
+         // DAVID Apr-2  this is needed to add a chat window to those already existent
+         this.props.setChatsNumber()
 
-        this.props.socket.on('emitbroadcast', function (data: any) {
-            console.log("emitbroadcast has been received ")
-            console.log(data)
-
-        });
 
     }
 
+
+    allMembers = (members: any) => {
+        let all = ""
+
+        members.forEach((element: any) => {
+            console.log(all)
+            all = all.concat("", element.username, "   email: ", element.email, "\n")
+
+        });
+        return (all)
+    }
+
+
+
+
     componentDidMount() {
+
+        this.props.getgroupsIds(this.props.loggedUser)
+
+            .then(
+                (response: any) => {
+                    if (response.data !== undefined) {
+                        this.setState({ OwnedGroupRoomId: response.data },
+                            () => {
+                                console.log("withRoomId", this.state)
+                            })
+                        this.props.getNames(response.data)
+                            .then((response: any) => {
+                                console.log("coming back")
+
+                                this.setState({
+                                    groupConversationId: response.data[0]._id,
+                                    members: response.data[0].members
+                                }, () => { console.log(response.data[0].members) })
+
+                            }, () => { console.log("empty response, not found") })
+                    }
+                })
+
 
         // Ojo... is this necessary ?, do I need to put in the state befor hand ??
         this.props.getAllContactsList(this.props.loggedUser).then(
             (response: any) => {
                 console.log("new data")
-                console.log(response)
+                console.log("response", response)
                 this.setState({ contacts: response.data })
+
             }
         )
 
@@ -63,25 +100,35 @@ export class Left extends React.Component<connected_p, ClassState> {
 
 
     render() {
+
         return (
             <div>
                 {/* 1/1 REDUX REDUX REDUX REDUX REDUX */}
                 {/* {(this.state.allUsers).map((d, idx) => { */}
+
                 {(this.state.contacts).map((d, idx) => {
                     let li_value = d.contactname
                     return (
-                        <div>
-                            <button onClick={this.handleChat} className="btn btn-info" id={d.conversationId} key={d.conversationId} >{li_value}</button>
+                        <div key={idx}>
+                            <button onClick={this.handleChat} className="btn btn-info" id={d.conversationId} key={d.contact} >{li_value}</button>
                             <br />
                         </div>
                     )
                 })}
                 <br />
-                {this.props.uiUserID ?
-                    <button className="btn btn-info" key={this.props.uiUserID.concat("@@", this.props.uicontactId)} >{this.props.uicontactName}</button>
+
+                {this.state.groupConversationId ?
+                    <button onClick={this.handleChat} className="btn btn-info" id={this.state.groupConversationId} key={this.state.groupConversationId} data-toggle="tooltip" data-placement="top" title={this.allMembers(this.state.members)}>Grupo</button>
                     :
                     <br />
                 }
+
+
+                {/* {this.props.uiUserID ?
+                    <button className="btn btn-info" key={this.props.uiUserID.concat("@@", this.props.uicontactId)} >{this.props.uicontactName}</button>
+                    :
+                    <br />
+                } */}
             </div >
         );
     }
@@ -90,7 +137,7 @@ export class Left extends React.Component<connected_p, ClassState> {
 type m2p = {
     contacts: Array<{ _id: string, userId: string, contactId: string }>,
     loggedUser: string
-    nameLoggedUser:string
+    nameLoggedUser: string
     uiUserID: string
     uicontactId: string
     uicontactName: string
@@ -98,7 +145,11 @@ type m2p = {
 }
 
 type d2p = {
+    getgroupsIds: any
     getAllContactsList: (userIdTerm: string) => (any)
+    getNames: (arrayOfIds: string) => (any)
+    setRoom: (roomId: string) => (any)
+    setChatsNumber: () => (any)
 }
 
 type own_p = {
@@ -128,8 +179,11 @@ import axios from "axios"
 
 const mapDispatchToProps = (dispatch: Function) => {
     return {
-
+        getNames: (arrayOfIds: string) => axios.post("/api/users/getnames/", { arrayOfIds }),
+        getgroupsIds: (userId: string) => axios.post("/api/users/getgroups/", { userId: userId }),
         getAllContactsList: (userIdTerm: string) => axios.post("/api/users/contactlist/", { userIdParam: userIdTerm }),
+        setRoom: (roomId: string) => dispatch({ type: "SET_ROOMID", payload: { roomId } }),
+        setChatsNumber: () => dispatch({ type: "SET_CHATNUMBER" })
         //  displayAllContacts: (allUsers: Array<{ _id: string, username: string, selected: boolean }>) => dispatch({ type: "ADD_USERS", payload: { allUsers } })
     }
 }

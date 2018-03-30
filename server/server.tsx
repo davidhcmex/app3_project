@@ -48,34 +48,46 @@ mongo.connect('mongodb://127.0.0.1/mongochat', function (err: any, db: any) {
 
     // Connect to Socket.io
     client.on('connection', function (socket: any) {
-        let chat = db.collection('chats');
+        //let chat = db.collection('chats');
         const currentUsers = db.collection('currentUsers');
 
         console.log('User ' + socket.id + ' has been connected!');
 
         // Create function to send status
-        let sendStatus = function (s: any) {
-            socket.emit('status', s);
-        }
+        // let sendStatus = function (s: any) {
+        //     socket.emit('status', s);
+        // }
 
-        socket.on('addconversation', function (data:any) {
-           
+        //  currently being used
+        //  currently being used
+        //  currently being used
+
+        socket.on('addconversation', function (data: any) {
+
             // store the room name in the socket session for this client
-            socket.room = data.room_name;
-    
+            //socket.room = data.room_name;
+
             // send client to room
             socket.join(data.room_name);
             console.log("broadcasting")
-            // echo to client they've connected
-            // socket.emit('updatechat', 'SERVER', 'you have connected to room', data.room_name);
-            // echo to room 1 that a person has connected to their room
-            //	socket.broadcast.to('room1').emit('updatechat', 'SERVER', username + ' has connected to this room');
-            socket.broadcast.to(data.room_name).emit('emitbroadcast', data.user_name)
-            // socket.emit('updatecontacts', usernames, data.room_name);
+     
+            socket.broadcast.to(data.room_name).emit('emitbroadcast', { userName: data.user_name, roomId: data.room_name })
+            
         })
 
+        socket.on("messagetoroom", function (data: any) {
+
+            console.log("message receive to boradcast")
+            console.log(data)
+            client.in(data.roomId).emit('broadcastmessage', { name: data.name, message: data.message })
+
+        })
+
+        //  currently being used END
+
+
         socket.on("username", function (username: any) {
-            
+
 
             currentUsers.find().toArray(function (err: any, res: any) {
                 if (err) throw err;
@@ -91,6 +103,8 @@ mongo.connect('mongodb://127.0.0.1/mongochat', function (err: any, db: any) {
         })
 
 
+
+
         //  Handle log off
 
         socket.on('disconnect', function () {
@@ -102,27 +116,27 @@ mongo.connect('mongodb://127.0.0.1/mongochat', function (err: any, db: any) {
         });
 
         // Handle input events
-        socket.on('input', function (data: any) {
-            let name = data.name;
-            let message = data.message;
+        // socket.on('input', function (data: any) {
+        //     let name = data.name;
+        //     let message = data.message;
 
-            // Check for name and message
-            if (name == '' || message == '') {
-                // Send error status
-                sendStatus({ status: 'Please enter a name and message' });
-            } else {
-                // Insert message
-                chat.insert({ name: name, message: message }, function () {
-                    client.emit('output', [data]);
+        //     // Check for name and message
+        //     if (name == '' || message == '') {
+        //         // Send error status
+        //         sendStatus({ status: 'Please enter a name and message' });
+        //     } else {
+        //         // Insert message
+        //         chat.insert({ name: name, message: message }, function () {
+        //             client.emit('output', [data]);
 
-                    // Send status object
-                    sendStatus({
-                        message: 'Message sent',
-                        clear: true
-                    });
-                });
-            }
-        });
+        //             // Send status object
+        //             sendStatus({
+        //                 message: 'Message sent',
+        //                 clear: true
+        //             });
+        //         });
+        //     }
+        // });
     });
 });
 

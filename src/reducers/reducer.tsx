@@ -7,7 +7,8 @@ interface stateInterface {
     userId: string,
     usernamec: string,
     contactId: string, 
-    contactName:string
+    contactName:string,
+    numChats:number
 }
 
 var initialState: stateInterface = {
@@ -18,7 +19,8 @@ var initialState: stateInterface = {
     userId: "",
     usernamec: "",
     contactId: "", 
-    contactName:""
+    contactName:"",
+    numChats:0
 }
 
 interface payloadInterface {
@@ -31,12 +33,21 @@ interface payloadInterface {
         userId: string
         usernamec: string
         contactId:string, 
-        contactName:string
+        contactName:string,
+        roomId:string
     }
 }
 
 
 const reducer = (state = initialState, action: payloadInterface) => {
+
+    if (action.type === 'SET_CHATNUMBER') {
+
+        return {
+            ...state,
+            numChats: state.numChats + 1
+        }
+    }
 
     if (action.type === 'ADD_USERS') {
 
@@ -91,6 +102,15 @@ const reducer = (state = initialState, action: payloadInterface) => {
             userNameContactState: "", 
             contactIdState: "", 
             contactNameState: ""
+        }
+    }
+
+    
+    if (action.type === 'SET_ROOMID') {
+
+        return {
+            ...state,
+            roomId: action.payload.roomId
         }
     }
 
