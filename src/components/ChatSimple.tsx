@@ -82,6 +82,7 @@ export class Chat extends React.Component<PropsInterface & p & d2p, stateInterfa
 
         // TEMPORAL SE ANALIZARA DESPUES this.props.socket.emit("input", { name: this.props.username, message: this["message"].value })
         this.props.socket.emit("messagetoroom", { name: this.props.username, message: this["message"].value, roomId: this.props.roomIdrdx })
+        this.props.addMessageRedux({userId: this.props.userId, message: this["message"].value, roomId: this.props.roomIdrdx })
 
         // OR
 
@@ -113,7 +114,7 @@ export class Chat extends React.Component<PropsInterface & p & d2p, stateInterfa
                                         <div className="form-group">
                                             <label className="control-label">Message</label>
                                             <input value={this.state.message}
-                                                type="text" name="Message"
+                                                type="text" name="message"
                                                 ref={node => this["message"] = node}
                                                 onChange={this.onChange}
                                                 className="form-control" />
@@ -148,9 +149,7 @@ export class Chat extends React.Component<PropsInterface & p & d2p, stateInterfa
     }
 }
 
-interface d2p {
-    getgroupId: any
-}
+
 const mapStateToProps = (state: any) => {
     return {
 
@@ -166,14 +165,16 @@ interface owned {
     socket: SocketIOClient.Socket
 }
 
+interface d2p{
+    addMessageRedux: (messajeObj: {userId:string, message: string, roomId:string }) => (any)
+}
+
 
 const mapDispatchToProps = (dispatch: Function) => {
     return {
-
-
-        //  displayAllContacts: (allUsers: Array<{ _id: string, username: string, selected: boolean }>) => dispatch({ type: "ADD_USERS", payload: { allUsers } })
+        addMessageRedux: (messageObj: {userId:string, message: string, roomId:string }) => dispatch({ type: "ADD_MSG", payload: {messageObj}  }),
     }
 }
 
-export default connect<PropsInterface, {}, owned>(mapStateToProps, mapDispatchToProps)(Chat)
+export default connect<PropsInterface, d2p, owned>(mapStateToProps, mapDispatchToProps)(Chat)
 //export default connect(null, mapDispatchToProps)(Chat)

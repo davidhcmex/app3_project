@@ -38,8 +38,26 @@ export class Left extends React.Component<connected_p, ClassState> {
         // DAVID Apr-2 room_name has to be put in redux so that the chat component know where to START
         this.props.setRoom(room_name)
 
-         // DAVID Apr-2  this is needed to add a chat window to those already existent
-         this.props.setChatsNumber()
+        // DAVID Apr-2  this is needed to add a chat window to those already existent
+        this.props.setChatsNumber()
+
+
+    }
+
+    switchToChat = (e: React.FormEvent<HTMLButtonElement>) => {
+        console.log(e.currentTarget.id)
+        
+        // DAVID Apr-2  this is needed to add a chat window to those already existent
+        // no need for this !!!.. time waisted :-(
+        // this.props.setChatsNumber()
+        // I will resume next monday from here
+
+        // get the values in redux for the conversation belonging to the id
+        // erase the content of the window
+        // if there are values for that conversation id, put them in the window
+        // (they must be ordered by timestamp to preserve the same sequence)
+
+
 
 
     }
@@ -111,6 +129,7 @@ export class Left extends React.Component<connected_p, ClassState> {
                     return (
                         <div key={idx}>
                             <button onClick={this.handleChat} className="btn btn-info" id={d.conversationId} key={d.contact} >{li_value}</button>
+                            <button onClick={this.switchToChat} className="btn btn-success" id={d.conversationId} key={d.contact.concat("b")} >switch here</button>
                             <br />
                         </div>
                     )
@@ -118,7 +137,10 @@ export class Left extends React.Component<connected_p, ClassState> {
                 <br />
 
                 {this.state.groupConversationId ?
-                    <button onClick={this.handleChat} className="btn btn-info" id={this.state.groupConversationId} key={this.state.groupConversationId} data-toggle="tooltip" data-placement="top" title={this.allMembers(this.state.members)}>Grupo</button>
+                    <div>
+                        <button onClick={this.handleChat} className="btn btn-info" id={this.state.groupConversationId} key={this.state.groupConversationId} data-toggle="tooltip" data-placement="top" title={this.allMembers(this.state.members)}>Grupo</button>
+                        <button onClick={this.switchToChat} className="btn btn-success" id={this.state.groupConversationId} key={this.state.groupConversationId.concat("b")} data-toggle="tooltip" data-placement="top" title={this.allMembers(this.state.members)}>Switch Here</button>
+                    </div>
                     :
                     <br />
                 }

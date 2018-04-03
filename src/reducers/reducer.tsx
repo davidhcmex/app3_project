@@ -3,38 +3,42 @@ interface stateInterface {
     allUsersInState: Array<{ _id: string, username: string, selected: boolean }>
     idLoggedUser: string,
     allContactsInState: Array<{ _id: string, userId: string, contactId: string }>,
+    messages:Array<{userId:string, message: string, roomId:string }>
+
 
     userId: string,
     usernamec: string,
-    contactId: string, 
-    contactName:string,
-    numChats:number
+    contactId: string,
+    contactName: string,
+    numChats: number
 }
 
 var initialState: stateInterface = {
     allUsersInState: [],
     idLoggedUser: "",
     allContactsInState: [],
+    messages:[],
 
     userId: "",
     usernamec: "",
-    contactId: "", 
-    contactName:"",
-    numChats:0
+    contactId: "",
+    contactName: "",
+    numChats: 0
 }
 
 interface payloadInterface {
     type: string,
     payload: {
         id: string,
-        username:string,
+        username: string,
         allUsers: Array<{ _id: string, username: string, selected: boolean }>
         allContacts: Array<{ _id: string, userId: string, contactId: string }>
+        messageObj: { userId:string, message: string, roomId:string}
         userId: string
         usernamec: string
-        contactId:string, 
-        contactName:string,
-        roomId:string
+        contactId: string,
+        contactName: string,
+        roomId: string
     }
 }
 
@@ -42,11 +46,27 @@ interface payloadInterface {
 const reducer = (state = initialState, action: payloadInterface) => {
 
     if (action.type === 'SET_CHATNUMBER') {
+        var adding=0
+        if (state.numChats === 1)
+            adding = -1
+        else
+            adding = +1
 
         return {
             ...state,
-            numChats: state.numChats + 1
+
+            numChats: state.numChats + adding
         }
+    }
+
+    if (action.type === 'ADD_MSG') {
+        return {
+            ...state,
+            messages: [...state.messages, action.payload.messageObj]
+        }
+
+       
+        
     }
 
     if (action.type === 'ADD_USERS') {
@@ -87,9 +107,9 @@ const reducer = (state = initialState, action: payloadInterface) => {
 
         return {
             ...state,
-            userIdContactState: action.payload.userId, 
-            userNameContactState: action.payload.usernamec, 
-            contactIdState: action.payload.contactId, 
+            userIdContactState: action.payload.userId,
+            userNameContactState: action.payload.usernamec,
+            contactIdState: action.payload.contactId,
             contactNameState: action.payload.contactName
         }
     }
@@ -98,14 +118,14 @@ const reducer = (state = initialState, action: payloadInterface) => {
 
         return {
             ...state,
-            userIdContactState: "", 
-            userNameContactState: "", 
-            contactIdState: "", 
+            userIdContactState: "",
+            userNameContactState: "",
+            contactIdState: "",
             contactNameState: ""
         }
     }
 
-    
+
     if (action.type === 'SET_ROOMID') {
 
         return {
