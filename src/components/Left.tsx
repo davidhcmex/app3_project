@@ -6,7 +6,9 @@ interface ClassState {
     groupConversationId: string,
     members: any,
     OwnedGroupRoomId: Array<{ _id: string }>
-    contacts: Array<{ _id: string, user: string, contact: string, username: string, contactname: string, conversationId: string }>
+    contacts: Array<{ _id: string, user: string, contact: string, username: string, contactname: string, conversationId: string }>,
+    display: Array<string>
+    displayGroup: string
 
 }
 
@@ -18,14 +20,18 @@ export class Left extends React.Component<connected_p, ClassState> {
             groupConversationId: "",
             OwnedGroupRoomId: [{ _id: "" }],
             contacts: [],
-            members: []
+            members: [],
+
+            display: [],
+            displayGroup: "none"
+
 
         }
     }
 
 
-    handleChat = (e: React.FormEvent<HTMLButtonElement>) => {
-        console.log(e.currentTarget.id)
+    handleChat = (idx: number) => (e: React.FormEvent<HTMLButtonElement>) => {
+        console.log(e.currentTarget.id + "   idx   " + idx)
         let room_name = e.currentTarget.id
 
         console.log(this.props)
@@ -42,8 +48,35 @@ export class Left extends React.Component<connected_p, ClassState> {
         // DAVID Apr-8 no longer used, will be replaced by REDUX
         // this.props.setChatsNumber()
 
+        e.currentTarget.style.display = "none"
+        let ids = [...this.state.display];
+        ids[idx] = 'block';
+        this.setState({ display: ids }, () => { console.log(this.state) })
+
+
 
     }
+
+
+    handleGroup = (e: React.FormEvent<HTMLButtonElement>) => {
+
+        let room_name = e.currentTarget.id
+
+        console.log(this.props)
+
+        this.props.socket.emit('addconversation', { room_name, user_name: this.props.nameLoggedUser });
+
+
+        this.props.setRoom(room_name)
+
+
+        e.currentTarget.style.display = "none"
+        this.setState({ displayGroup: "block" })
+
+
+
+    }
+
 
     switchToChat = (e: React.FormEvent<HTMLButtonElement>) => {
         console.log(e.currentTarget.id)
@@ -51,10 +84,10 @@ export class Left extends React.Component<connected_p, ClassState> {
         // if the id belonging to the button is different from the actual id where the conversation is happening
 
         //if (e.currentTarget.id != this.props.roomId) {
-           // this.props.clear_message_window()
-            this.props.filter_from_history(e.currentTarget.id ) 
-            this.props.setRoom(e.currentTarget.id)
-            // filter the content of the chat window according to REDUX
+        // this.props.clear_message_window()
+        this.props.filter_from_history(e.currentTarget.id)
+        this.props.setRoom(e.currentTarget.id)
+        // filter the content of the chat window according to REDUX
         //}
 
 
@@ -116,7 +149,12 @@ export class Left extends React.Component<connected_p, ClassState> {
         // Ojo... is this necessary ?, do I need to put in the state befor hand ??
         this.props.getAllContactsList(this.props.loggedUser).then(
             (response: any) => {
-                this.setState({ contacts: response.data })
+                //this magic is for filling the arrays of styles for the buttons
+                this.setState({ contacts: response.data }, () => {
+               
+                    this.setState({display:Array.from({length: this.state.contacts.length}, (v, k) => "none")});  
+                    
+                })
             }
         )
 
@@ -134,19 +172,26 @@ export class Left extends React.Component<connected_p, ClassState> {
                 {(this.state.contacts).map((d, idx) => {
                     let li_value = d.contactname
                     return (
-                        <div key={idx}>
-                            <button onClick={this.handleChat} className="btn btn-info" id={d.conversationId} key={d.contact} >{li_value}</button>
-                            <button onClick={this.switchToChat} className="btn btn-success" id={d.conversationId} key={d.contact.concat("b")} >switch here</button>
-                            <br />
+
+                        <div key={idx} >
+                            <div>
+                                <button onClick={this.handleChat(idx)} className="btn btn-default" id={d.conversationId} key={d.contact}  >{li_value}</button>
+                                <button onClick={this.switchToChat} className="btn btn-success" id={d.conversationId} key={d.contact.concat("b")} style={{ display: this.state.display[idx] }} >{li_value}</button>
+                                
+                            </div>
                         </div>
+
+
                     )
                 })}
                 <br />
 
                 {this.state.groupConversationId ?
                     <div>
-                        <button onClick={this.handleChat} className="btn btn-info" id={this.state.groupConversationId} key={this.state.groupConversationId} data-toggle="tooltip" data-placement="top" title={this.allMembers(this.state.members)}>Grupo</button>
-                        <button onClick={this.switchToChat} className="btn btn-success" id={this.state.groupConversationId} key={this.state.groupConversationId.concat("b")} data-toggle="tooltip" data-placement="top" title={this.allMembers(this.state.members)}>Switch Here</button>
+
+                        <button onClick={this.handleGroup} className="btn btn-default" id={this.state.groupConversationId} key={this.state.groupConversationId} data-toggle="tooltip" data-placement="top" title={this.allMembers(this.state.members)} >Grupo</button>
+                        <button onClick={this.switchToChat} className="btn btn-success" id={this.state.groupConversationId} key={this.state.groupConversationId.concat("b")} data-toggle="tooltip" data-placement="top" style={{ display: this.state.displayGroup }} title={this.allMembers(this.state.members)}>Grupo</button>
+
                     </div>
                     :
                     <br />
@@ -180,7 +225,7 @@ type d2p = {
     getNames: (arrayOfIds: string) => (any)
     setRoom: (roomId: string) => (any)
     setChatsNumber: () => (any)
-    filter_from_history: (conversationId:string)=> (any)
+    filter_from_history: (conversationId: string) => (any)
     clear_message_window: () => (any)
 }
 
@@ -217,8 +262,8 @@ const mapDispatchToProps = (dispatch: Function) => {
         getAllContactsList: (userIdTerm: string) => axios.post("/api/users/contactlist/", { userIdParam: userIdTerm }),
         setRoom: (roomId: string) => dispatch({ type: "SET_ROOMID", payload: { roomId } }),
         setChatsNumber: () => dispatch({ type: "SET_CHATNUMBER" }),
-        filter_from_history: (switchtoconversationId:string)=> dispatch({type:"FILTER", payload:{switchtoconversationId}}),
-        clear_message_window: () => dispatch({ type: "CLEAR_CHATWINDOW"}),
+        filter_from_history: (switchtoconversationId: string) => dispatch({ type: "FILTER", payload: { switchtoconversationId } }),
+        clear_message_window: () => dispatch({ type: "CLEAR_CHATWINDOW" }),
         //  displayAllContacts: (allUsers: Array<{ _id: string, username: string, selected: boolean }>) => dispatch({ type: "ADD_USERS", payload: { allUsers } })
     }
 }

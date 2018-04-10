@@ -117,9 +117,7 @@ export class Chat extends React.Component<PropsInterface & p & d2p, stateInterfa
 
 
         return (
-            <div className="outer">
-
-                <div className={this.props.top}>
+           
                     <div className="container" >
 
                         <div className="row">
@@ -180,8 +178,7 @@ export class Chat extends React.Component<PropsInterface & p & d2p, stateInterfa
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+        
 
 
         );

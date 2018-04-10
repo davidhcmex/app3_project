@@ -165,25 +165,20 @@ nav ul, header h1, footer p, .contentWrapper {
 
 .outer {
     position: relative;
-    margin-top: 20px;
+    margin-top: 10px;
+    
 }
 
 .top {
     position: absolute;
-    margin-top: -10px;
+   
     background-color: pink;
-    z-index: 1;
+    
     width: 100%;
     
 }
 
-.bottom {
-    position:absolute;
-    background-color: lightblue;
-    z-index: 2;
-    width: 100%;
-    
-}
+
 
 
 

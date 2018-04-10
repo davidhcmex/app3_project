@@ -34,17 +34,14 @@ export class ChatComposed extends React.Component<m2p & RouteComponentProps<{}>,
             // <Chat socket={this.state.socket} top="bottom" />
     )
 
-    handleChat = () => {
-        console.log("HElluva")
-        console.log(this.props.chatNumber)
-    }
+  
     render() {
         return (
             <div className="pageWrapper">
                 <header text-alignment="center">
 
                     <h1>My Chat</h1>
-                    <button onClick={this.handleChat} className="btn btn-info" >Click Me</button>
+                   
                 </header>
                 <div className="contentWrapper">
                     <aside className="sidebar1">
