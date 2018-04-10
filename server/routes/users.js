@@ -194,6 +194,13 @@ router.post("/getnames", function (req, res, next) {
     });
     //   res.send(rec))
 });
+router.post("/getnamesmessages", function (req, res, next) {
+    console.log("I am here getting names");
+    console.log(req.body.arrayOfMessages);
+    res.send(req.body.arrayOfMessages);
+    // Conversation.find({ "_id": req.body.arrayOfIds[0]._id }).
+    //   res.send(rec))
+});
 router.post("/userlist", function (req, res, next) {
     User.find((req.body.searchParam) ? { username: { $regex: req.body.searchParam, $options: "i" } } : {}).
         limit(5).

@@ -10,7 +10,8 @@ interface stateInterface {
     usernamec: string,
     contactId: string,
     contactName: string,
-    numChats: number
+    numChats: number,
+    filterconversationId:string
 }
 
 var initialState: stateInterface = {
@@ -23,6 +24,7 @@ var initialState: stateInterface = {
     usernamec: "",
     contactId: "",
     contactName: "",
+    filterconversationId:"",
     numChats: 0
 }
 
@@ -38,12 +40,54 @@ interface payloadInterface {
         usernamec: string
         contactId: string,
         contactName: string,
-        roomId: string
+        roomId: string,
+        switchtoconversationId:string,
+        arrayWithNames: Array<{ userName:string, message: string, roomId:string}>
     }
 }
 
-
+// filter_from_history: (conversationId:string)=> dispatch({type:"FILTER", payload:{conversationId}}),
+// clear_message_window: () => dispatch({ type: "CLEAR_CHATWINDOW"}),
 const reducer = (state = initialState, action: payloadInterface) => {
+
+    if (action.type === 'ADD_MSG_WITH_NAMES') {
+        return {
+
+            // assignNames: (arrayWithNames: Array<{ userNames: string, message: string, roomId: string }>) 
+            ...state,
+            arrayWithNames: action.payload.arrayWithNames
+        }
+    }
+
+    if (action.type === 'FILTER') {
+        return {
+            ...state,
+            filterconversationId: action.payload.switchtoconversationId
+        }
+    }
+
+    if (action.type === 'UNSETFILTER') {
+        return {
+            ...state,
+            filterconversationId: ""
+        }
+    }
+
+
+    if (action.type === 'UNSET_ROOMID') {
+        return {
+            ...state,
+            roomId: ""
+        }
+    }
+
+    
+    if (action.type === 'UNSET_CHATHISTORY') {
+        return {
+            ...state,
+            messages: []
+        }
+    }
 
     if (action.type === 'SET_CHATNUMBER') {
         var adding=0

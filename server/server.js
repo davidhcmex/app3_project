@@ -50,22 +50,12 @@ mongo.connect('mongodb://127.0.0.1/mongochat', function (err, db) {
             // send client to room
             socket.join(data.room_name);
             console.log("broadcasting");
-            // echo to client they've connected
-            // socket.emit('updatechat', 'SERVER', 'you have connected to room', data.room_name);
-            // echo to room 1 that a person has connected to their room
-            //	socket.broadcast.to('room1').emit('updatechat', 'SERVER', username + ' has connected to this room');
             socket.broadcast.to(data.room_name).emit('emitbroadcast', { userName: data.user_name, roomId: data.room_name });
-            // socket.emit('updatecontacts', usernames, data.room_name);
         });
         socket.on("messagetoroom", function (data) {
-            // if ((socket.room) != data.roomId)
-            // {
-            //     socket.room = data.roomId
-            //     socket.join(data.roomId)
-            // }
             console.log("message receive to boradcast");
             console.log(data);
-            client.in(data.roomId).emit('broadcastmessage', { name: data.name, message: data.message });
+            client.in(data.roomId).emit('broadcastmessage', { userId: data.userId, username: data.username, message: data.message, roomId: data.roomId });
         });
         //  currently being used END
         socket.on("username", function (username) {

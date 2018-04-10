@@ -28,9 +28,10 @@ export class ChatComposed extends React.Component<m2p & RouteComponentProps<{}>,
     }
 
     getChatNumber = () => (
-        (this.props.chatNumber===1) ?
-            <Chat socket={this.state.socket} top="top" /> :
-            <Chat socket={this.state.socket} top="bottom" />
+        <Chat socket={this.state.socket} />
+        // (this.props.chatNumber===1) ?
+        //     <Chat socket={this.state.socket} top="top" /> :
+            // <Chat socket={this.state.socket} top="bottom" />
     )
 
     handleChat = () => {

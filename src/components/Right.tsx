@@ -27,7 +27,10 @@ interface d {
     removeContactDB: any,
     unsetUserId: any,
     updateContactsUI: any,
-    unsetContacts: any
+    unsetContacts: any,
+    unsetChatshistory: any,
+    unsetRoomId:any,
+    unsetfilterConversationId:any
 }
 
 interface owned {
@@ -120,7 +123,10 @@ export class Right extends React.Component<p & d & owned, StateInterface>{
             this.props.socket.disconnect()
             this.props.unsetUserId()
             this.props.unsetContacts()
+            this.props.unsetChatshistory()
+            this.props.unsetRoomId()
             this.props.history.push("/login")
+            this.props.unsetfilterConversationId()
         }
     }
 
@@ -209,6 +215,9 @@ const mapDispatchToProps = (dispatch: Function) => {
         addAllContactsToChoose: (allUsers: Array<{ _id: string, username: string, selected: boolean }>) => dispatch({ type: "ADD_USERS", payload: { allUsers } }),
         unsetUserId: () => dispatch({ type: "UNSET_USER_ID" }),
         unsetContacts: () => dispatch({ type: "UNSET_CONTACTS" }),
+        unsetChatshistory: () => dispatch({ type: "UNSET_CHATHISTORY" }),
+        unsetRoomId: () => dispatch({ type: "UNSET_ROOMID" }),
+        unsetfilterConversationId: () => ({type:"UNSETFILTER"}),
         updateContactsUI: (userId: string, usernamec: string, contactId: string, contactName: string) => dispatch({ type: "ADD_USERUID", payload: { userId, usernamec, contactId, contactName } })
     }
 }

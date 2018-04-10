@@ -39,14 +39,25 @@ export class Left extends React.Component<connected_p, ClassState> {
         this.props.setRoom(room_name)
 
         // DAVID Apr-2  this is needed to add a chat window to those already existent
-        this.props.setChatsNumber()
+        // DAVID Apr-8 no longer used, will be replaced by REDUX
+        // this.props.setChatsNumber()
 
 
     }
 
     switchToChat = (e: React.FormEvent<HTMLButtonElement>) => {
         console.log(e.currentTarget.id)
-        
+
+        // if the id belonging to the button is different from the actual id where the conversation is happening
+
+        //if (e.currentTarget.id != this.props.roomId) {
+           // this.props.clear_message_window()
+            this.props.filter_from_history(e.currentTarget.id ) 
+            this.props.setRoom(e.currentTarget.id)
+            // filter the content of the chat window according to REDUX
+        //}
+
+
         // DAVID Apr-2  this is needed to add a chat window to those already existent
         // no need for this !!!.. time waisted :-(
         // this.props.setChatsNumber()
@@ -67,7 +78,7 @@ export class Left extends React.Component<connected_p, ClassState> {
         let all = ""
 
         members.forEach((element: any) => {
-            console.log(all)
+
             all = all.concat("", element.username, "   email: ", element.email, "\n")
 
         });
@@ -105,14 +116,10 @@ export class Left extends React.Component<connected_p, ClassState> {
         // Ojo... is this necessary ?, do I need to put in the state befor hand ??
         this.props.getAllContactsList(this.props.loggedUser).then(
             (response: any) => {
-                console.log("new data")
-                console.log("response", response)
                 this.setState({ contacts: response.data })
-
             }
         )
 
-        console.log(this.props)
 
     }
 
@@ -160,6 +167,7 @@ type m2p = {
     contacts: Array<{ _id: string, userId: string, contactId: string }>,
     loggedUser: string
     nameLoggedUser: string
+    roomId: string
     uiUserID: string
     uicontactId: string
     uicontactName: string
@@ -172,6 +180,8 @@ type d2p = {
     getNames: (arrayOfIds: string) => (any)
     setRoom: (roomId: string) => (any)
     setChatsNumber: () => (any)
+    filter_from_history: (conversationId:string)=> (any)
+    clear_message_window: () => (any)
 }
 
 type own_p = {
@@ -186,6 +196,7 @@ const mapStateToProps = (state: any) => {
         contacts: state.allContactsInState,
         loggedUser: state.idLoggedUser,
         nameLoggedUser: state.nameLoggedUser,
+        roomId: state.roomId,
 
         //properties of the recently added contact (it already is in Mongo)
         uiUserID: state.userIdContactState,
@@ -205,7 +216,9 @@ const mapDispatchToProps = (dispatch: Function) => {
         getgroupsIds: (userId: string) => axios.post("/api/users/getgroups/", { userId: userId }),
         getAllContactsList: (userIdTerm: string) => axios.post("/api/users/contactlist/", { userIdParam: userIdTerm }),
         setRoom: (roomId: string) => dispatch({ type: "SET_ROOMID", payload: { roomId } }),
-        setChatsNumber: () => dispatch({ type: "SET_CHATNUMBER" })
+        setChatsNumber: () => dispatch({ type: "SET_CHATNUMBER" }),
+        filter_from_history: (switchtoconversationId:string)=> dispatch({type:"FILTER", payload:{switchtoconversationId}}),
+        clear_message_window: () => dispatch({ type: "CLEAR_CHATWINDOW"}),
         //  displayAllContacts: (allUsers: Array<{ _id: string, username: string, selected: boolean }>) => dispatch({ type: "ADD_USERS", payload: { allUsers } })
     }
 }

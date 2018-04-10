@@ -5,14 +5,18 @@ interface stateInterface {
     message: string,
     status: string,
     uiUsername: string,
-    the_messages: Array<{ name: string, message: string }>,
- //   roomId: string,
+    the_messages: Array<{ userId: string, username: string, message: string, conversationId:string }>,
+    //   roomId: string,
 }
 
 interface PropsInterface {
     username: string,
     userId: string,
-    roomIdrdx: string
+    roomIdrdx: string,
+    filterconversationId: string,
+    all_messages: Array<{ userId: string, username: string,  message: string, roomId: string }>,
+    arrayWithNames: Array<{ userName: string, message: string, roomId: string }>
+
 }
 
 interface p {
@@ -28,8 +32,8 @@ export class Chat extends React.Component<PropsInterface & p & d2p, stateInterfa
             message: "",
             status: "",
             uiUsername: "",
-            the_messages: [{ name: "", message: "" }],
-           // roomId: ""
+            the_messages: [{ userId: "", username: "",  message: "" , conversationId:""}],
+            // roomId: ""
         }
         this.onChange = this.onChange.bind(this)
         this.onSubmit = this.onSubmit.bind(this)
@@ -42,7 +46,7 @@ export class Chat extends React.Component<PropsInterface & p & d2p, stateInterfa
             })
     }
 
-    componentDidMount() {
+    componentWillMount() {
         //receiving data to be output to local component render
         // TEMPORAL SE ANALIZARA DESPUES
         //  this.props.socket.on('output', (data: any) => this.display_screen(data));
@@ -51,24 +55,36 @@ export class Chat extends React.Component<PropsInterface & p & d2p, stateInterfa
         this.props.socket.on('emitbroadcast', (data: any) => {
             console.log("emitbroadcast has been received in chat component ")
             console.log(data)
-         //   this.setState({ roomId: data.roomId })
+
         });
 
         // IN DISPLAY <=
 
         this.props.socket.on('broadcastmessage', (data: any) => {
             console.log("broadcastmessage has been received in chat component to be displayed ")
-            this.display_screen(data)
+
+            console.log(data)
+            // important !
+            if (this.props.userId != data.userId)
+                // store in redux of the incoming message
+                { 
+                    
+                    this.props.addMessageRedux({ userId: data.userId, username: data.username, message: data.message, roomId: data.roomId })
+                    
+                }
+             //this.display_screen(data) // not possible to use state and redux at the same time!
         });
 
 
     }
 
     display_screen(data: any) {
-        console.log(data)
+
         let third_array = []
         third_array = (this.state.the_messages).concat(data)
+
         this.setState({ the_messages: third_array })
+        console.log(this.state.the_messages)
     }
 
     onSubmit(e: React.FormEvent<EventTarget>) {
@@ -81,21 +97,28 @@ export class Chat extends React.Component<PropsInterface & p & d2p, stateInterfa
 
 
         // TEMPORAL SE ANALIZARA DESPUES this.props.socket.emit("input", { name: this.props.username, message: this["message"].value })
-        this.props.socket.emit("messagetoroom", { name: this.props.username, message: this["message"].value, roomId: this.props.roomIdrdx })
-        this.props.addMessageRedux({userId: this.props.userId, message: this["message"].value, roomId: this.props.roomIdrdx })
-
-        // OR
-
-        // REDUX
-
-        //this.props.emit(this["uname"].value, this["message"].value)
+        // send the message to the server so it gets broadcasted with "broadcastmessage" (on didMount)
+        this.props.socket.emit("messagetoroom", { userId: this.props.userId, username: this.props.username, message: this["message"].value, roomId: this.props.roomIdrdx })
+        console.log(this.props.userId, this.props.username)
+        //store in redux of the local message
+        this.props.addMessageRedux({ userId: this.props.userId, username: this.props.username, message: this["message"].value, roomId: this.props.roomIdrdx })
+        this.props.filter_from_history(this.props.roomIdrdx)
 
     }
 
     render() {
+
+        console.log("coonversationid", this.props.filterconversationId)
+        console.log("all conversations", this.props.all_messages)
+        let newArray = this.props.all_messages.filter((element) => {
+            // for all the messages where the roomId is equal to the id of last pressed button
+            return element.roomId == this.props.filterconversationId
+        });
+
+
         return (
             <div className="outer">
-                
+
                 <div className={this.props.top}>
                     <div className="container" >
 
@@ -130,9 +153,25 @@ export class Chat extends React.Component<PropsInterface & p & d2p, stateInterfa
                                         <div className="card">
 
                                             <div id="messages" className="card-block" style={{ height: "300px" }}>
-                                                {this.state.the_messages.map(function (d, idx) {
-                                                    return (<p key={idx}>{d.name}{d.message}</p>)
+                                                {/* {this.state.the_messages.map((d, idx) => {
+                                                    return (<p key={idx}>{d.userId}{d.message}</p>)
+                                                })} */}
+
+                                                {newArray.map((d, idx) => {
+                                                    return (<p key={idx}><strong>{d.username}:</strong>&nbsp;&nbsp;&nbsp;{d.message}</p>)
                                                 })}
+
+                                                {/* {(this.props.arrayWithNames !== undefined) ?
+                                                    this.props.arrayWithNames.map((d, idx) => {
+                                                        return (<p key={idx}><strong>{d.userName}:</strong>&nbsp;&nbsp;&nbsp;{d.message}</p>)
+                                                    })
+                                                    :
+
+                                                    <br /> */}
+
+
+
+
                                             </div>
                                         </div>
 
@@ -155,24 +194,40 @@ const mapStateToProps = (state: any) => {
 
         userId: state.idLoggedUser,
         username: state.nameLoggedUser,
-        roomIdrdx: state.roomId
+        roomIdrdx: state.roomId,
+        filterconversationId: state.filterconversationId,
+        all_messages: state.messages,
+        arrayWithNames: state.arrayWithNames
     };
 };
 
 
 interface owned {
-    top:string,
+    //  top: string,
     socket: SocketIOClient.Socket
 }
 
-interface d2p{
-    addMessageRedux: (messajeObj: {userId:string, message: string, roomId:string }) => (any)
+interface d2p {
+    addMessageRedux: (messajeObj: { userId: string, username: string, message: string, roomId: string }) => (any),
+    filter_from_history: (conversationId: string) => (any),
+    getNames: (arrayOfIds: Array<{ userId: string, message: string, roomId: string }>) => (any),
+    assignNames: (arrayWithNames: Array<{ userNames: string, message: string, roomId: string }>) => (any)
+
+
+
 }
 
+import axios from "axios"
 
 const mapDispatchToProps = (dispatch: Function) => {
     return {
-        addMessageRedux: (messageObj: {userId:string, message: string, roomId:string }) => dispatch({ type: "ADD_MSG", payload: {messageObj}  }),
+        getNames: (arrayOfMessages: Array<{ userId: string, message: string, roomId: string }>) => axios.post("/api/users/getnamesmessages/", { arrayOfMessages }),
+
+        assignNames: (arrayWithNames: Array<{ userNames: string, message: string, roomId: string }>) => dispatch({ type: "ADD_MSG_WITH_NAMES", payload: { arrayWithNames } }),
+
+        filter_from_history: (switchtoconversationId: string) => dispatch({ type: "FILTER", payload: { switchtoconversationId } }),
+        addMessageRedux: (messageObj: { userId: string, message: string, roomId: string }) => dispatch({ type: "ADD_MSG", payload: { messageObj } }),
+
     }
 }
 
