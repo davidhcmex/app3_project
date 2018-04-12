@@ -44,13 +44,16 @@ mongo.connect('mongodb://127.0.0.1/mongochat', function (err, db) {
         //  currently being used
         //  currently being used
         //  currently being used
-        socket.on('addconversation', function (data) {
+        socket.on('addconversations', function (data) {
             // store the room name in the socket session for this client
             //socket.room = data.room_name;
-            // send client to room
-            socket.join(data.room_name);
-            console.log("broadcasting");
-            socket.broadcast.to(data.room_name).emit('emitbroadcast', { userName: data.user_name, roomId: data.room_name });
+            data.forEach(function (elem) {
+                console.log("rec for contast");
+                console.log(elem);
+                socket.join(elem.conversationId);
+                socket.broadcast.to(elem.conversationID).emit('emitbroadcast', { userName: elem.user_name, roomId: elem.conversationId });
+                console.log("broadcasting");
+            });
         });
         socket.on("messagetoroom", function (data) {
             console.log("message receive to boradcast");
@@ -77,26 +80,6 @@ mongo.connect('mongodb://127.0.0.1/mongochat', function (err, db) {
                 socket.broadcast.emit('logoff', socket.id);
             });
         });
-        // Handle input events
-        // socket.on('input', function (data: any) {
-        //     let name = data.name;
-        //     let message = data.message;
-        //     // Check for name and message
-        //     if (name == '' || message == '') {
-        //         // Send error status
-        //         sendStatus({ status: 'Please enter a name and message' });
-        //     } else {
-        //         // Insert message
-        //         chat.insert({ name: name, message: message }, function () {
-        //             client.emit('output', [data]);
-        //             // Send status object
-        //             sendStatus({
-        //                 message: 'Message sent',
-        //                 clear: true
-        //             });
-        //         });
-        //     }
-        // });
     });
 });
 app.listen(port, function () { return console.log("Listening on port " + port); });

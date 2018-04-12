@@ -32,21 +32,14 @@ export class Left extends React.Component<connected_p, ClassState> {
 
     handleChat = (idx: number) => (e: React.FormEvent<HTMLButtonElement>) => {
         console.log(e.currentTarget.id + "   idx   " + idx)
-        let room_name = e.currentTarget.id
+      //  let room_name = e.currentTarget.id
 
         console.log(this.props)
 
-        // call the server-side function 'adduser' and send one parameter (value of prompt)
-        //    => OUT SETUP
-
-        this.props.socket.emit('addconversation', { room_name, user_name: this.props.nameLoggedUser });
+       
 
         // DAVID Apr-2 room_name has to be put in redux so that the chat component know where to START
-        this.props.setRoom(room_name)
-
-        // DAVID Apr-2  this is needed to add a chat window to those already existent
-        // DAVID Apr-8 no longer used, will be replaced by REDUX
-        // this.props.setChatsNumber()
+       // this.props.setRoom(room_name)
 
         e.currentTarget.style.display = "none"
         let ids = [...this.state.display];
@@ -60,11 +53,11 @@ export class Left extends React.Component<connected_p, ClassState> {
 
     handleGroup = (e: React.FormEvent<HTMLButtonElement>) => {
 
-        let room_name = e.currentTarget.id
+       let room_name = e.currentTarget.id
 
         console.log(this.props)
 
-        this.props.socket.emit('addconversation', { room_name, user_name: this.props.nameLoggedUser });
+       // NO VAAAa this.props.socket.emit('addconversation', { room_name, user_name: this.props.nameLoggedUser });
 
 
         this.props.setRoom(room_name)
@@ -85,8 +78,10 @@ export class Left extends React.Component<connected_p, ClassState> {
 
         //if (e.currentTarget.id != this.props.roomId) {
         // this.props.clear_message_window()
-        this.props.filter_from_history(e.currentTarget.id)
+
         this.props.setRoom(e.currentTarget.id)
+        this.props.filter_from_history(e.currentTarget.id)
+        
         // filter the content of the chat window according to REDUX
         //}
 
@@ -148,7 +143,15 @@ export class Left extends React.Component<connected_p, ClassState> {
 
         // Ojo... is this necessary ?, do I need to put in the state befor hand ??
         this.props.getAllContactsList(this.props.loggedUser).then(
+
             (response: any) => {
+
+                let contactAllinfo = response.data
+
+                let conversationId_Username  = contactAllinfo.map((obj:{conversationId:string, username:string}) => ({conversationId: obj.conversationId, user_name: obj.username}));
+
+                this.props.socket.emit('addconversations', conversationId_Username);
+
                 //this magic is for filling the arrays of styles for the buttons
                 this.setState({ contacts: response.data }, () => {
                
@@ -175,8 +178,8 @@ export class Left extends React.Component<connected_p, ClassState> {
 
                         <div key={idx} >
                             <div>
-                                <button onClick={this.handleChat(idx)} className="btn btn-default" id={d.conversationId} key={d.contact}  >{li_value}</button>
-                                <button onClick={this.switchToChat} className="btn btn-success" id={d.conversationId} key={d.contact.concat("b")} style={{ display: this.state.display[idx] }} >{li_value}</button>
+                                {/* <button onClick={this.handleChat(idx)} className="btn btn-default" id={d.conversationId} key={d.contact}  >{li_value}</button> */}
+                                <button onClick={this.switchToChat} className="btn btn-success" id={d.conversationId} key={d.contact.concat("b")} >{li_value}</button>
                                 
                             </div>
                         </div>

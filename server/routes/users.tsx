@@ -226,7 +226,7 @@ router.post("/getnames", function (req, res, next) {
         Conversation.find({ "_id": elem }, { _id: 1 })
             .populate("members", { username: 1, email: 1 })
             .exec((err: any, rec: any) => {
-                console.log(JSON.stringify(rec, null, "\t"))
+             //   console.log(JSON.stringify(rec, null, "\t"))
 
                 res.send(rec)
             }))
