@@ -127,7 +127,7 @@ footer {
     margin-top: 15px;
     font-size: .8em;	
     padding: 10px 10px 30px 10px;
-    background-color: rgba(107, 148, 224, 0.774);
+    background-color: rgba(39, 105, 214, 0.651);
     color: rgb(204,204,204);
 }
 footer a {
@@ -163,19 +163,8 @@ nav ul, header h1, footer p, .contentWrapper {
   margin: 0 auto;
 }
 
-.outer {
-    position: relative;
-    margin-top: 10px;
-    
-}
-
-.top {
-    position: absolute;
-   
-    background-color: pink;
-    
-    width: 100%;
-    
+.btn-default:hover, .btn-default.hover, .btn-default.focus, .btn-default:focus {
+    background:rgba(39, 105, 214, 0.651);
 }
 
 

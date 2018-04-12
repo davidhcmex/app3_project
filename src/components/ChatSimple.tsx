@@ -47,16 +47,7 @@ export class Chat extends React.Component<PropsInterface & p & d2p, stateInterfa
     }
 
     componentWillMount() {
-        //receiving data to be output to local component render
-        // TEMPORAL SE ANALIZARA DESPUES
-        //  this.props.socket.on('output', (data: any) => this.display_screen(data));
 
-        //    IN SETUP <=      
-        this.props.socket.on('emitbroadcast', (data: any) => {
-            console.log("emitbroadcast has been received in chat component ")
-            console.log(data)
-
-        });
 
         // IN DISPLAY <=
 
@@ -92,6 +83,10 @@ export class Chat extends React.Component<PropsInterface & p & d2p, stateInterfa
         this.props.socket.on("status", (data: any) => {
             this.setState({ status: data.status })
         })
+        this.setState(
+            {
+                message: ""
+            })
 
 
 

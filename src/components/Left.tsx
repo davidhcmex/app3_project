@@ -9,6 +9,8 @@ interface ClassState {
     contacts: Array<{ _id: string, user: string, contact: string, username: string, contactname: string, conversationId: string }>,
     display: Array<string>
     displayGroup: string
+    cboot: Array<string>
+    cbootgroup: string
 
 }
 
@@ -23,78 +25,39 @@ export class Left extends React.Component<connected_p, ClassState> {
             members: [],
 
             display: [],
-            displayGroup: "none"
+            displayGroup: "block",
+
+            cboot: [],
+            cbootgroup: "btn btn-primary"
 
 
         }
     }
 
 
-    handleChat = (idx: number) => (e: React.FormEvent<HTMLButtonElement>) => {
-        console.log(e.currentTarget.id + "   idx   " + idx)
-      //  let room_name = e.currentTarget.id
-
-        console.log(this.props)
-
-       
-
-        // DAVID Apr-2 room_name has to be put in redux so that the chat component know where to START
-       // this.props.setRoom(room_name)
-
-        e.currentTarget.style.display = "none"
-        let ids = [...this.state.display];
-        ids[idx] = 'block';
-        this.setState({ display: ids }, () => { console.log(this.state) })
-
-
-
-    }
-
-
-    handleGroup = (e: React.FormEvent<HTMLButtonElement>) => {
-
-       let room_name = e.currentTarget.id
-
-        console.log(this.props)
-
-       // NO VAAAa this.props.socket.emit('addconversation', { room_name, user_name: this.props.nameLoggedUser });
-
-
-        this.props.setRoom(room_name)
-
-
-        e.currentTarget.style.display = "none"
-        this.setState({ displayGroup: "block" })
-
-
-
-    }
-
-
-    switchToChat = (e: React.FormEvent<HTMLButtonElement>) => {
+    switchToChat = (idx: number) => (e: React.FormEvent<HTMLButtonElement>) => {
         console.log(e.currentTarget.id)
-
-        // if the id belonging to the button is different from the actual id where the conversation is happening
-
-        //if (e.currentTarget.id != this.props.roomId) {
-        // this.props.clear_message_window()
 
         this.props.setRoom(e.currentTarget.id)
         this.props.filter_from_history(e.currentTarget.id)
-        
-        // filter the content of the chat window according to REDUX
-        //}
+        this.setState({
+            cboot: Array.from({ length: this.state.contacts.length }, (v, k) => "btn btn-default"),
+            cbootgroup: "btn btn-default"
+        }, () => {
+            if (idx === 0)
+                this.setState({
+                    cbootgroup: "btn btn-primary"
+                })
+            else {
+                let cboot = [...this.state.cboot]
+                cboot[idx - 1] = "btn btn-primary"
+                this.setState({
+                    cboot
+                })
+            }
+        });
 
 
-        // DAVID Apr-2  this is needed to add a chat window to those already existent
-        // no need for this !!!.. time waisted :-(
-        // this.props.setChatsNumber()
-        // I will resume next monday from here
-
-        // get the values in redux for the conversation belonging to the id
-        // erase the content of the window
-        // if there are values for that conversation id, put them in the window
-        // (they must be ordered by timestamp to preserve the same sequence)
 
 
 
@@ -118,6 +81,8 @@ export class Left extends React.Component<connected_p, ClassState> {
 
     componentDidMount() {
 
+
+
         this.props.getgroupsIds(this.props.loggedUser)
 
             .then(
@@ -130,6 +95,17 @@ export class Left extends React.Component<connected_p, ClassState> {
                         this.props.getNames(response.data)
                             .then((response: any) => {
                                 console.log("coming back")
+
+                                // this.props.setRoom(response.data[0]._id)
+                                // this.props.filter_from_history(response.data[0]._id)
+
+                                this.props.socket.emit('addconversations', [{ conversationId: response.data[0]._id, user_name: "" }])
+
+                                this.props.socket.on('joined', () => {
+                                    this.props.setRoom(response.data[0]._id)
+                                    this.props.filter_from_history(response.data[0]._id)
+                                })
+
 
                                 this.setState({
                                     groupConversationId: response.data[0]._id,
@@ -148,15 +124,15 @@ export class Left extends React.Component<connected_p, ClassState> {
 
                 let contactAllinfo = response.data
 
-                let conversationId_Username  = contactAllinfo.map((obj:{conversationId:string, username:string}) => ({conversationId: obj.conversationId, user_name: obj.username}));
+                let conversationId_Username = contactAllinfo.map((obj: { conversationId: string, username: string }) => ({ conversationId: obj.conversationId, user_name: obj.username }));
 
                 this.props.socket.emit('addconversations', conversationId_Username);
 
-                //this magic is for filling the arrays of styles for the buttons
+                // this magic is for filling the arrays of styles for the buttons
                 this.setState({ contacts: response.data }, () => {
-               
-                    this.setState({display:Array.from({length: this.state.contacts.length}, (v, k) => "none")});  
-                    
+
+                    this.setState({ cboot: Array.from({ length: this.state.contacts.length }, (v, k) => "btn btn-default") });
+
                 })
             }
         )
@@ -178,9 +154,9 @@ export class Left extends React.Component<connected_p, ClassState> {
 
                         <div key={idx} >
                             <div>
-                                {/* <button onClick={this.handleChat(idx)} className="btn btn-default" id={d.conversationId} key={d.contact}  >{li_value}</button> */}
-                                <button onClick={this.switchToChat} className="btn btn-success" id={d.conversationId} key={d.contact.concat("b")} >{li_value}</button>
-                                
+                                {/* hack to have the ability to manage the active chat button */}
+                                <button onClick={this.switchToChat(idx + 1)} /*style={{ display: this.state.display[idx] }} className="btn btn-default"*/ className={this.state.cboot[idx]} id={d.conversationId} key={d.contact.concat("b")} >{li_value}</button>
+
                             </div>
                         </div>
 
@@ -191,9 +167,7 @@ export class Left extends React.Component<connected_p, ClassState> {
 
                 {this.state.groupConversationId ?
                     <div>
-
-                        <button onClick={this.handleGroup} className="btn btn-default" id={this.state.groupConversationId} key={this.state.groupConversationId} data-toggle="tooltip" data-placement="top" title={this.allMembers(this.state.members)} >Grupo</button>
-                        <button onClick={this.switchToChat} className="btn btn-success" id={this.state.groupConversationId} key={this.state.groupConversationId.concat("b")} data-toggle="tooltip" data-placement="top" style={{ display: this.state.displayGroup }} title={this.allMembers(this.state.members)}>Grupo</button>
+                        <button onClick={this.switchToChat(0)}  /*style={{ display: this.state.displayGroup }} className="btn btn-default" */ className={this.state.cbootgroup} id={this.state.groupConversationId} key={this.state.groupConversationId.concat("b")} data-toggle="tooltip" data-placement="top" title={this.allMembers(this.state.members)}>Grupo</button>
 
                     </div>
                     :

@@ -67,21 +67,20 @@ mongo.connect('mongodb://127.0.0.1/mongochat', function (err: any, db: any) {
             // store the room name in the socket session for this client
             //socket.room = data.room_name;
 
-            data.forEach((elem:any)=>{
+            data.forEach((elem: any) => {
                 console.log("rec for contast")
                 console.log(elem)
                 socket.join(elem.conversationId);
-                socket.broadcast.to(elem.conversationID).emit('emitbroadcast', { userName: elem.user_name, roomId: elem.conversationId})
-                console.log("broadcasting")
+
             })
-            
+            client.emit("joined")
         })
 
         socket.on("messagetoroom", function (data: any) {
 
             console.log("message receive to boradcast")
             console.log(data)
-            client.in(data.roomId).emit('broadcastmessage', { userId: data.userId, username:data.username, message: data.message, roomId: data.roomId })
+            client.in(data.roomId).emit('broadcastmessage', { userId: data.userId, username: data.username, message: data.message, roomId: data.roomId })
 
         })
 
