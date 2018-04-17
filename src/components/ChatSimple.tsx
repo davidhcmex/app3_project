@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from "react-redux"
+import * as moment from "moment"
 
 interface stateInterface {
     message: string,
@@ -14,7 +15,7 @@ interface PropsInterface {
     userId: string,
     roomIdrdx: string,
     filterconversationId: string,
-    all_messages: Array<{ userId: string, username: string,  message: string, roomId: string }>,
+    all_messages: Array<{ userId: string, username: string,  message: string, roomId: string, timestamp:string }>,
     arrayWithNames: Array<{ userName: string, message: string, roomId: string }>
 
 }
@@ -60,23 +61,15 @@ export class Chat extends React.Component<PropsInterface & p & d2p, stateInterfa
                 // store in redux of the incoming message
                 { 
                     
-                    this.props.addMessageRedux({ userId: data.userId, username: data.username, message: data.message, roomId: data.roomId })
+                    this.props.addMessageRedux({ userId: data.userId, username: data.username, message: data.message, roomId: data.roomId, timestamp:data.timestamp })
                     
                 }
-             //this.display_screen(data) // not possible to use state and redux at the same time!
+             
         });
 
 
     }
 
-    display_screen(data: any) {
-
-        let third_array = []
-        third_array = (this.state.the_messages).concat(data)
-
-        this.setState({ the_messages: third_array })
-        console.log(this.state.the_messages)
-    }
 
     onSubmit(e: React.FormEvent<EventTarget>) {
         e.preventDefault()
@@ -93,10 +86,11 @@ export class Chat extends React.Component<PropsInterface & p & d2p, stateInterfa
 
         // TEMPORAL SE ANALIZARA DESPUES this.props.socket.emit("input", { name: this.props.username, message: this["message"].value })
         // send the message to the server so it gets broadcasted with "broadcastmessage" (on didMount)
-        this.props.socket.emit("messagetoroom", { userId: this.props.userId, username: this.props.username, message: this["message"].value, roomId: this.props.roomIdrdx })
-        console.log(this.props.userId, this.props.username)
+        let localTimestamp = moment().format("LL, LTS").toString()
+        this.props.socket.emit("messagetoroom", { userId: this.props.userId, username: this.props.username, message: this["message"].value, roomId: this.props.roomIdrdx, timestamp:localTimestamp })
+      
         //store in redux of the local message
-        this.props.addMessageRedux({ userId: this.props.userId, username: this.props.username, message: this["message"].value, roomId: this.props.roomIdrdx })
+        this.props.addMessageRedux({ userId: this.props.userId, username: this.props.username, message: this["message"].value, roomId: this.props.roomIdrdx, timestamp:localTimestamp })
         this.props.filter_from_history(this.props.roomIdrdx)
 
     }
@@ -104,6 +98,7 @@ export class Chat extends React.Component<PropsInterface & p & d2p, stateInterfa
     render() {
 
         console.log("coonversationid", this.props.filterconversationId)
+        console.log(moment().format("LL, LTS").toString())
         console.log("all conversations", this.props.all_messages)
         let newArray = this.props.all_messages.filter((element) => {
             // for all the messages where the roomId is equal to the id of last pressed button
@@ -151,7 +146,7 @@ export class Chat extends React.Component<PropsInterface & p & d2p, stateInterfa
                                                 })} */}
 
                                                 {newArray.map((d, idx) => {
-                                                    return (<p key={idx}><strong>{d.username}:</strong>&nbsp;&nbsp;&nbsp;{d.message}</p>)
+                                                    return (<p key={idx}><strong>{d.username}</strong>,({d.timestamp}):&nbsp;&nbsp;&nbsp;{d.message}</p>)
                                                 })}
 
                                                 {/* {(this.props.arrayWithNames !== undefined) ?
@@ -184,12 +179,13 @@ export class Chat extends React.Component<PropsInterface & p & d2p, stateInterfa
 const mapStateToProps = (state: any) => {
     return {
 
-        userId: state.idLoggedUser,
-        username: state.nameLoggedUser,
-        roomIdrdx: state.roomId,
-        filterconversationId: state.filterconversationId,
-        all_messages: state.messages,
-        arrayWithNames: state.arrayWithNames
+        userId: state.chatApp.idLoggedUser,
+        username: state.chatApp.nameLoggedUser,
+        roomIdrdx: state.chatApp.roomId,
+        filterconversationId: state.chatApp.filterconversationId,
+        all_messages: state.chatApp.messages,
+        arrayWithNames: state.chatApp.arrayWithNames,
+        timestamp: state.chatApp.timestamp
     };
 };
 
@@ -200,7 +196,7 @@ interface owned {
 }
 
 interface d2p {
-    addMessageRedux: (messajeObj: { userId: string, username: string, message: string, roomId: string }) => (any),
+    addMessageRedux: (messajeObj: { userId: string, username: string, message: string, roomId: string, timestamp:string }) => (any),
     filter_from_history: (conversationId: string) => (any),
     getNames: (arrayOfIds: Array<{ userId: string, message: string, roomId: string }>) => (any),
     assignNames: (arrayWithNames: Array<{ userNames: string, message: string, roomId: string }>) => (any)
@@ -218,7 +214,7 @@ const mapDispatchToProps = (dispatch: Function) => {
         assignNames: (arrayWithNames: Array<{ userNames: string, message: string, roomId: string }>) => dispatch({ type: "ADD_MSG_WITH_NAMES", payload: { arrayWithNames } }),
 
         filter_from_history: (switchtoconversationId: string) => dispatch({ type: "FILTER", payload: { switchtoconversationId } }),
-        addMessageRedux: (messageObj: { userId: string, message: string, roomId: string }) => dispatch({ type: "ADD_MSG", payload: { messageObj } }),
+        addMessageRedux: (messageObj: { userId: string, message: string, roomId: string, timestamp:string }) => dispatch({ type: "ADD_MSG", payload: { messageObj } }),
 
     }
 }

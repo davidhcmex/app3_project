@@ -5,20 +5,29 @@ import registerServiceWorker from './registerServiceWorker';
 
 import { Provider } from "react-redux"
 import thunk from "redux-thunk"
-import { createStore, applyMiddleware} from "redux"
-import setAuthorizationToken from "./utils/setAuthorizationToken"
-import reducer from './reducers/reducer';
+import { createStore, applyMiddleware, combineReducers} from "redux"
+
+import reducerOrig from './reducers/reducer';
 
 import logger from "redux-logger";
 
+import { reducer as reduxFormReducer } from 'redux-form';
+
+let chatApp = reducerOrig
+
+const reducer1 = combineReducers({
+  chatApp,
+  form: reduxFormReducer
+})
+
 
 const store = createStore(
-   reducer, 
+  reducer1, 
    applyMiddleware(logger,thunk)
   //applyMiddleware(thunk)
 )
 
-setAuthorizationToken(localStorage.token)
+
 
 ReactDOM.render(
   <Provider store={store}>

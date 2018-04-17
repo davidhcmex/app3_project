@@ -345,7 +345,7 @@ router.post("/login", function (req, res, next) {
                     }
                     else {
                         console.log("No Password Match")
-                        errors = [{ param: "Password", msg: "Passwords do not match" }]
+                        errors = [{ param: "Password", msg: "Incorrect Password" }]
 
                         res.send({ errors: errors, isValid: false })
                     }

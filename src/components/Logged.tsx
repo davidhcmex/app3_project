@@ -116,7 +116,7 @@ export class Logged extends React.Component<PropsInterface & p, StateInterface> 
 
 const mapStateToProps = (state: any) => {
     return {
-        username: state.nameLoggedUser
+        username: state.chatApp.nameLoggedUser
 
     };
 };

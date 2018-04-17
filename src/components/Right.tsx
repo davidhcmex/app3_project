@@ -224,9 +224,9 @@ const mapDispatchToProps = (dispatch: Function) => {
 
 const mapStateToProps = (state: any) => {
     return {
-        users: state.allUsersInState,
-        userId: state.idLoggedUser,
-        username: state.nameLoggedUser
+        users: state.chatApp.allUsersInState,
+        userId: state.chatApp.idLoggedUser,
+        username: state.chatApp.nameLoggedUser
     };
 };
 

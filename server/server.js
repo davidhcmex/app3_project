@@ -57,7 +57,7 @@ mongo.connect('mongodb://127.0.0.1/mongochat', function (err, db) {
         socket.on("messagetoroom", function (data) {
             console.log("message receive to boradcast");
             console.log(data);
-            client.in(data.roomId).emit('broadcastmessage', { userId: data.userId, username: data.username, message: data.message, roomId: data.roomId });
+            client.in(data.roomId).emit('broadcastmessage', { userId: data.userId, username: data.username, message: data.message, roomId: data.roomId, timestamp: data.timestamp });
         });
         //  currently being used END
         socket.on("username", function (username) {

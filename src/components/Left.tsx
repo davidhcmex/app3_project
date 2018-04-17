@@ -215,16 +215,16 @@ type connected_p = m2p & d2p & own_p
 
 const mapStateToProps = (state: any) => {
     return {
-        contacts: state.allContactsInState,
-        loggedUser: state.idLoggedUser,
-        nameLoggedUser: state.nameLoggedUser,
-        roomId: state.roomId,
+        contacts: state.chatApp.allContactsInState,
+        loggedUser: state.chatApp.idLoggedUser,
+        nameLoggedUser: state.chatApp.nameLoggedUser,
+        roomId: state.chatApp.roomId,
 
         //properties of the recently added contact (it already is in Mongo)
-        uiUserID: state.userIdContactState,
-        uiuserName: state.userNameContactState,
-        uicontactId: state.contactIdState,
-        uicontactName: state.contactNameState
+        uiUserID: state.chatApp.userIdContactState,
+        uiuserName: state.chatApp.userNameContactState,
+        uicontactId: state.chatApp.contactIdState,
+        uicontactName: state.chatApp.contactNameState
 
 
     };

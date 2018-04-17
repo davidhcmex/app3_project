@@ -11,7 +11,8 @@ interface stateInterface {
     contactId: string,
     contactName: string,
     numChats: number,
-    filterconversationId:string
+    filterconversationId:string,
+    lang:string
 }
 
 var initialState: stateInterface = {
@@ -25,6 +26,7 @@ var initialState: stateInterface = {
     contactId: "",
     contactName: "",
     filterconversationId:"",
+    lang:"en-US",
     numChats: 0
 }
 
@@ -35,13 +37,14 @@ interface payloadInterface {
         username: string,
         allUsers: Array<{ _id: string, username: string, selected: boolean }>
         allContacts: Array<{ _id: string, userId: string, contactId: string }>
-        messageObj: { userId:string, message: string, roomId:string}
+        messageObj: { userId:string, message: string, roomId:string, timestamp:string}
         userId: string
         usernamec: string
         contactId: string,
         contactName: string,
         roomId: string,
         switchtoconversationId:string,
+        values:{lang:string}
         arrayWithNames: Array<{ userName:string, message: string, roomId:string}>
     }
 }
@@ -49,6 +52,15 @@ interface payloadInterface {
 // filter_from_history: (conversationId:string)=> dispatch({type:"FILTER", payload:{conversationId}}),
 // clear_message_window: () => dispatch({ type: "CLEAR_CHATWINDOW"}),
 const reducer = (state = initialState, action: payloadInterface) => {
+
+    if (action.type === 'SET_LANG') {
+        return {
+
+            // assignNames: (arrayWithNames: Array<{ userNames: string, message: string, roomId: string }>) 
+            ...state,
+            lang: action.payload.values.lang
+        }
+    }
 
     if (action.type === 'ADD_MSG_WITH_NAMES') {
         return {
@@ -88,6 +100,8 @@ const reducer = (state = initialState, action: payloadInterface) => {
             messages: []
         }
     }
+
+    /* last change */
 
     if (action.type === 'SET_CHATNUMBER') {
         var adding=0

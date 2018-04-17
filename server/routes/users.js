@@ -272,7 +272,7 @@ router.post("/login", function (req, res, next) {
                     }
                     else {
                         console.log("No Password Match");
-                        errors_1 = [{ param: "Password", msg: "Passwords do not match" }];
+                        errors_1 = [{ param: "Password", msg: "Incorrect Password" }];
                         res.send({ errors: errors_1, isValid: false });
                     }
                 });

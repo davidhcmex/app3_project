@@ -6,6 +6,7 @@ import * as openSocket from 'socket.io-client';
 import Logged from "./Logged";
 import { RouteComponentProps } from "react-router";
 import { connect } from "react-redux";
+import { FormattedMessage } from 'react-intl';
 
 
 interface stateProps {
@@ -31,23 +32,38 @@ export class ChatComposed extends React.Component<m2p & RouteComponentProps<{}>,
         <Chat socket={this.state.socket} />
         // (this.props.chatNumber===1) ?
         //     <Chat socket={this.state.socket} top="top" /> :
-            // <Chat socket={this.state.socket} top="bottom" />
+        // <Chat socket={this.state.socket} top="bottom" />
     )
 
-  
+
     render() {
         return (
             <div className="pageWrapper">
                 <header text-alignment="center">
 
-                    <h1>My Chat</h1>
-                   
+                    <h1>
+                        <FormattedMessage
+                            id="chatComposed.myChat"
+                            defaultMessage="dashboard"
+                        />
+                    </h1>
+
                 </header>
                 <div className="contentWrapper">
                     <aside className="sidebar1">
-                        <h2>Users Logged Now</h2>
+                        <h2>
+                        <FormattedMessage
+                            id="chatComposed.usersLoggedNow"
+                            defaultMessage="dashboard"
+                        />
+                        </h2>
                         <Logged socket={this.state.socket} />
-                        <h2>Users in Contacts</h2>
+                        <h2>
+                        <FormattedMessage
+                            id="chatComposed.usersInContacts"
+                            defaultMessage="dashboard"
+                        />
+                        </h2>
                         <Left socket={this.state.socket} />
                     </aside>
 
@@ -77,9 +93,9 @@ export class ChatComposed extends React.Component<m2p & RouteComponentProps<{}>,
 
 const mapStateToProps = (state: any) => {
     return {
-        chatNumber: state.numChats
+        chatNumber: state.chatApp.numChats
 
     };
 };
 
-export default connect<m2p, {}, { }>(mapStateToProps, {})(ChatComposed)
+export default connect<m2p, {}, {}>(mapStateToProps, {})(ChatComposed)

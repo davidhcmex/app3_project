@@ -6,6 +6,8 @@ import { connect } from "react-redux"
 //import * as jwt from "jsonwebtoken";
 import axios from "axios";
 
+import { FormattedMessage } from 'react-intl';
+
 
 //Here we will use redux to use  an action that will 
 //perform the post method (in register we did not use it)
@@ -23,7 +25,7 @@ interface ErrorsInterface extends StateInterface {
 }
 
 
-class LoginForm extends React.Component<d2p&{ login: any, history: any, setUserId: any }, ErrorsInterface> {
+class LoginForm extends React.Component<d2p & { login: any, history: any, setUserId: any }, ErrorsInterface> {
 
     //class LoginForm extends React.Component<RouteComponentProps<{id:string}>, ErrorsInterface> {
     constructor(props: any) {
@@ -103,9 +105,19 @@ class LoginForm extends React.Component<d2p&{ login: any, history: any, setUserI
     render() {
         return (
             <form onSubmit={this.onSubmit}>
-                <h1>Chat User Login</h1>
+                <h1>
+                    <FormattedMessage
+                        id="loginForm.chatUserLogin"
+                        defaultMessage="dashboard"
+                    />
+                </h1>
                 <div className="form-group">
-                    <label className="control-label">Username</label>
+                    <label className="control-label">
+                        <FormattedMessage
+                            id="loginForm.username"
+                            defaultMessage="dashboard"
+                        />
+                    </label>
                     <input value={this.state.username}
                         ref={node => this["uname"] = node}
                         type="text"
@@ -116,7 +128,12 @@ class LoginForm extends React.Component<d2p&{ login: any, history: any, setUserI
                 </div>
 
                 <div className="form-group">
-                    <label className="control-label">Password</label>
+                    <label className="control-label">
+                        <FormattedMessage
+                            id="loginForm.password"
+                            defaultMessage="dashboard"
+                        />
+                    </label>
                     <input value={this.state.password}
                         type="password" name="password"
                         ref={node => this["passwd"] = node}
@@ -132,8 +149,8 @@ class LoginForm extends React.Component<d2p&{ login: any, history: any, setUserI
                     {!(this.state.isValid) ? (
                         <ul>
                             {(this.state.errors).map(function (d, idx) {
-                                let li_value = "Field: ".concat(d.param, "Remark: ", d.msg)
-                                return (<li key={idx}>{li_value}</li>)
+                              
+                                return (<li key={idx}>Field: &nbsp;{d.param}&nbsp;&nbsp;&nbsp; Remark:&nbsp;{d.msg}</li>)
                             })}
 
                         </ul>) : ""}
