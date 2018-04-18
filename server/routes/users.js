@@ -252,7 +252,7 @@ router.post("/login", function (req, res, next) {
                 throw err;
             if (!user) {
                 console.log("No User With that name");
-                errors_1 = [{ param: "User Name", msg: "No user with that name" }];
+                errors_1 = [{ param: "1", msg: "No user with that name" }];
                 res.send({ errors: errors_1, isValid: false });
             }
             else {
@@ -272,7 +272,7 @@ router.post("/login", function (req, res, next) {
                     }
                     else {
                         console.log("No Password Match");
-                        errors_1 = [{ param: "Password", msg: "Incorrect Password" }];
+                        errors_1 = [{ param: "2", msg: "Incorrect Password" }];
                         res.send({ errors: errors_1, isValid: false });
                     }
                 });

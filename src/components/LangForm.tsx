@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Field, reduxForm } from 'redux-form';
 
 const LangForm = (props: any) => {
-  const { handleSubmit, pristine, submitting } = props;
+  const { handleSubmit} = props;
   return (
     <form onSubmit={handleSubmit} className="form-group">
 
@@ -19,15 +19,12 @@ const LangForm = (props: any) => {
             English
           </label>
           < br />
-          <label className="control-label">
-            <Field name="lang" component="input" type="radio" value="fr-FR" className="form-control" />
-            Francaise
-          </label>
+
         </div>
       </div>
 
       <div>
-        <button className="btn btn-primary" type="submit" disabled={pristine || submitting}>Ok</button>
+        <button className="btn btn-primary" type="submit" >Ok</button>
         <br />
 
       </div>

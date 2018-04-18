@@ -103,6 +103,7 @@ class LoginForm extends React.Component<d2p & { login: any, history: any, setUse
 
 
     render() {
+
         return (
             <form onSubmit={this.onSubmit}>
                 <h1>
@@ -144,13 +145,43 @@ class LoginForm extends React.Component<d2p & { login: any, history: any, setUse
 
                 <div className="form-group">
                     <button className="btn btn-primary btn-md">
-                        Login
-                </button>
+                        <FormattedMessage
+                            id="loginForm.LoginLbl"
+                            defaultMessage="dashboard"
+                        />
+                    </button>
                     {!(this.state.isValid) ? (
                         <ul>
-                            {(this.state.errors).map(function (d, idx) {
-                              
-                                return (<li key={idx}>Field: &nbsp;{d.param}&nbsp;&nbsp;&nbsp; Remark:&nbsp;{d.msg}</li>)
+                            {(this.state.errors).map((d, idx) => {
+                                switch (d.param) {
+                                    case "1":
+                                        return (<li key={idx}>
+                                            <FormattedMessage
+                                                id="errorMessages.text1"
+                                            />
+                                        </li>)
+                                    case "2":
+                                        return (<li key={idx}>
+                                            <FormattedMessage
+                                                id="errorMessages.text2"
+                                            />
+                                        </li>)
+                                    case "username":
+                                        return (<li key={idx}>
+                                            <FormattedMessage
+                                                id="errorMessages.text3"
+                                            />
+                                        </li>)
+                                    case "password":
+                                        return (<li key={idx}>
+                                            <FormattedMessage
+                                                id="errorMessages.text4"
+                                            />
+                                        </li>)
+
+                                    default:
+                                        return (<li key={idx}></li>)
+                                }
                             })}
 
                         </ul>) : ""}

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from "react-redux"
+import { FormattedMessage } from 'react-intl';
 
 
 interface ClassState {
@@ -167,7 +168,12 @@ export class Left extends React.Component<connected_p, ClassState> {
 
                 {this.state.groupConversationId ?
                     <div>
-                        <button onClick={this.switchToChat(0)}  /*style={{ display: this.state.displayGroup }} className="btn btn-default" */ className={this.state.cbootgroup} id={this.state.groupConversationId} key={this.state.groupConversationId.concat("b")} data-toggle="tooltip" data-placement="top" title={this.allMembers(this.state.members)}>Grupo</button>
+                        <button onClick={this.switchToChat(0)}  /*style={{ display: this.state.displayGroup }} className="btn btn-default" */ className={this.state.cbootgroup} id={this.state.groupConversationId} key={this.state.groupConversationId.concat("b")} data-toggle="tooltip" data-placement="top" title={this.allMembers(this.state.members)}>
+                        <FormattedMessage
+                            id="Left.Group"
+                            defaultMessage="dashboard"
+                        />
+                        </button>
 
                     </div>
                     :

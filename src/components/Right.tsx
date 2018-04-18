@@ -1,6 +1,9 @@
 import * as React from 'react';
 //import { userlist } from "./Thunks/userlistThunk"
 import { connect } from "react-redux"
+import { FormattedMessage } from 'react-intl';
+
+
 
 interface StateInterface {
 
@@ -29,8 +32,8 @@ interface d {
     updateContactsUI: any,
     unsetContacts: any,
     unsetChatshistory: any,
-    unsetRoomId:any,
-    unsetfilterConversationId:any
+    unsetRoomId: any,
+    unsetfilterConversationId: any
 }
 
 interface owned {
@@ -74,10 +77,10 @@ export class Right extends React.Component<p & d & owned, StateInterface>{
 
                 // add the contact, on response the contact should be added to the left contacts
                 // list
-                this.props.addContactDB(this.props.userId, this.props.username, array_aux[idx]._id, array_aux[idx].username )
+                this.props.addContactDB(this.props.userId, this.props.username, array_aux[idx]._id, array_aux[idx].username)
                 this.props.updateContactsUI(this.props.userId, this.props.username, array_aux[idx]._id, array_aux[idx].username)
                 console.log("calling redux")
-                
+
             }
         }
         else {
@@ -136,13 +139,21 @@ export class Right extends React.Component<p & d & owned, StateInterface>{
         return (
             <div>
                 <button className="btn btn-primary btn-md" data-toggle="modal" data-target="#myModal">
-                    Manage List of Contacts
+                    <FormattedMessage
+                        id="Right.Manage"
+                        defaultMessage="dashboard"
+                    />
                 </button>
                 <div className="modal fade" id="myModal">
                     <div className="modal-dialog">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h4 className="modal-title">Contacts Registered</h4>
+                                <h4 className="modal-title">
+                                    <FormattedMessage
+                                        id="Right.TitleSearch"
+                                        defaultMessage="dashboard"
+                                    />
+                                </h4>
                                 <button type="button" className="close" data-dismiss="modal">&times;</button>
                             </div>
                             <div className="modal-body">
@@ -150,7 +161,12 @@ export class Right extends React.Component<p & d & owned, StateInterface>{
 
 
 
-                                    <label className="control-label">Enter Search Term for Contacts</label>
+                                    <label className="control-label">
+                                    <FormattedMessage
+                                        id="Right.SearchLabel"
+                                        defaultMessage="dashboard"
+                                    />
+                                    </label>
                                     <input value={this.state.searchTerm}
                                         type="text"
                                         name="Enter name"
@@ -158,8 +174,11 @@ export class Right extends React.Component<p & d & owned, StateInterface>{
                                         className="form-control" required />
                                     <br />
                                     <button className="btn btn-primary btn-md">
-                                        Search Contacts
-                                        </button>
+                                        <FormattedMessage
+                                            id="Right.Search"
+                                            defaultMessage="dashboard"
+                                        />
+                                    </button>
 
                                     <ul className="list-group">
                                         {/* {(this.state.allUsers).map((d, idx) => { */}
@@ -175,13 +194,22 @@ export class Right extends React.Component<p & d & owned, StateInterface>{
                             </div>
 
                             <div className="modal-footer">
-                                <button onClick={this.updateContacts} type="button" className="btn btn-danger" data-dismiss="modal">Close</button>
+                                <button onClick={this.updateContacts} type="button" className="btn btn-danger" data-dismiss="modal">
+
+                                    <FormattedMessage
+                                        id="Right.Close"
+                                        defaultMessage="dashboard"
+                                    />
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
                 <button className="btn btn-primary btn-md" onClick={this.Logout}>
-                    Logout
+                    <FormattedMessage
+                        id="Right.Logout"
+                        defaultMessage="dashboard"
+                    />
                 </button>
 
 
@@ -201,7 +229,7 @@ const mapDispatchToProps = (dispatch: Function) => {
     return {
 
         userlist: (searchTerm: string) => axios.post("/api/users/userlist/", { searchParam: searchTerm }),
-        addContactDB: (userId: string, userName:string, contactId: string, contactName:string) => axios.post("/api/users/addconversation/", { userId, userName, contactId, contactName })
+        addContactDB: (userId: string, userName: string, contactId: string, contactName: string) => axios.post("/api/users/addconversation/", { userId, userName, contactId, contactName })
             .then((response: any) => {
                 if (response.data.ok == "ok") {
                     return ("success")
@@ -217,7 +245,7 @@ const mapDispatchToProps = (dispatch: Function) => {
         unsetContacts: () => dispatch({ type: "UNSET_CONTACTS" }),
         unsetChatshistory: () => dispatch({ type: "UNSET_CHATHISTORY" }),
         unsetRoomId: () => dispatch({ type: "UNSET_ROOMID" }),
-        unsetfilterConversationId: () => ({type:"UNSETFILTER"}),
+        unsetfilterConversationId: () => ({ type: "UNSETFILTER" }),
         updateContactsUI: (userId: string, usernamec: string, contactId: string, contactName: string) => dispatch({ type: "ADD_USERUID", payload: { userId, usernamec, contactId, contactName } })
     }
 }
