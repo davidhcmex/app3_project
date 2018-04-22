@@ -69,7 +69,7 @@ mongo.connect('mongodb://127.0.0.1/mongochat', function (err: any, db: any) {
 
             data.forEach((elem: any) => {
                 console.log("rec for contast")
-                console.log(elem)
+                // console.log(elem)
                 socket.join(elem.conversationId);
 
             })
@@ -79,7 +79,7 @@ mongo.connect('mongodb://127.0.0.1/mongochat', function (err: any, db: any) {
         socket.on("messagetoroom", function (data: any) {
 
             console.log("message receive to boradcast")
-            console.log(data)
+            // console.log(data)
             client.in(data.roomId).emit('broadcastmessage', { userId: data.userId, username: data.username, message: data.message, roomId: data.roomId, timestamp: data.timestamp })
 
         })

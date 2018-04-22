@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { connect } from "react-redux"
-import { FormattedMessage } from 'react-intl';
 import * as actions from '../reducers/actions';
 
 
@@ -11,8 +10,6 @@ interface ClassState {
     contacts: Array<{ _id: string, user: string, contact: string, username: string, contactname: string, conversationId: string }>,
     display: Array<string>
     displayGroup: string
-    cboot: Array<string>
-    cbootgroup: string
 
 }
 
@@ -27,39 +24,83 @@ export class Left extends React.Component<connected_p, ClassState> {
             members: [],
 
             display: [],
-            displayGroup: "block",
-
-            cboot: [],
-            cbootgroup: "btn btn-primary"
+            displayGroup: "none"
 
 
         }
     }
 
 
-    switchToChat = (idx: number) => (e: React.FormEvent<HTMLButtonElement>) => {
+    handleChat = (idx: number) => (e: React.FormEvent<HTMLButtonElement>) => {
+        console.log(e.currentTarget.id + "   idx   " + idx)
+        let room_name = e.currentTarget.id
+
+        console.log(this.props)
+
+        // call the server-side function 'adduser' and send one parameter (value of prompt)
+        //    => OUT SETUP
+
+        this.props.socket.emit('addconversation', { room_name, user_name: this.props.nameLoggedUser });
+
+        // DAVID Apr-2 room_name has to be put in redux so that the chat component know where to START
+        this.props.setRoom(room_name)
+
+        // DAVID Apr-2  this is needed to add a chat window to those already existent
+        // DAVID Apr-8 no longer used, will be replaced by REDUX
+        // this.props.setChatsNumber()
+
+        e.currentTarget.style.display = "none"
+        let ids = [...this.state.display];
+        ids[idx] = 'block';
+        this.setState({ display: ids }, () => { console.log(this.state) })
+
+
+
+    }
+
+
+    handleGroup = (e: React.FormEvent<HTMLButtonElement>) => {
+
+        let room_name = e.currentTarget.id
+
+        console.log(this.props)
+
+        this.props.socket.emit('addconversation', { room_name, user_name: this.props.nameLoggedUser });
+
+
+        this.props.setRoom(room_name)
+
+
+        e.currentTarget.style.display = "none"
+        this.setState({ displayGroup: "block" })
+
+
+
+    }
+
+
+    switchToChat = (e: React.FormEvent<HTMLButtonElement>) => {
         console.log(e.currentTarget.id)
 
-        this.props.setRoom(e.currentTarget.id)
+        // if the id belonging to the button is different from the actual id where the conversation is happening
+
+        //if (e.currentTarget.id != this.props.roomId) {
+        // this.props.clear_message_window()
         this.props.filter_from_history(e.currentTarget.id)
-        this.setState({
-            cboot: Array.from({ length: this.state.contacts.length }, (v, k) => "btn btn-default"),
-            cbootgroup: "btn btn-default"
-        }, () => {
-            if (idx === 0)
-                this.setState({
-                    cbootgroup: "btn btn-primary"
-                })
-            else {
-                let cboot = [...this.state.cboot]
-                cboot[idx - 1] = "btn btn-primary"
-                this.setState({
-                    cboot
-                })
-            }
-        });
+        this.props.setRoom(e.currentTarget.id)
+        // filter the content of the chat window according to REDUX
+        //}
 
 
+        // DAVID Apr-2  this is needed to add a chat window to those already existent
+        // no need for this !!!.. time waisted :-(
+        // this.props.setChatsNumber()
+        // I will resume next monday from here
+
+        // get the values in redux for the conversation belonging to the id
+        // erase the content of the window
+        // if there are values for that conversation id, put them in the window
+        // (they must be ordered by timestamp to preserve the same sequence)
 
 
 
@@ -83,8 +124,6 @@ export class Left extends React.Component<connected_p, ClassState> {
 
     componentDidMount() {
 
-
-
         this.props.getgroupsIds(this.props.loggedUser)
 
             .then(
@@ -98,17 +137,6 @@ export class Left extends React.Component<connected_p, ClassState> {
                             .then((response: any) => {
                                 console.log("coming back")
 
-                                // this.props.setRoom(response.data[0]._id)
-                                // this.props.filter_from_history(response.data[0]._id)
-
-                                this.props.socket.emit('addconversations', [{ conversationId: response.data[0]._id, user_name: "" }])
-
-                                this.props.socket.on('joined', () => {
-                                    this.props.setRoom(response.data[0]._id)
-                                    this.props.filter_from_history(response.data[0]._id)
-                                })
-
-
                                 this.setState({
                                     groupConversationId: response.data[0]._id,
                                     members: response.data[0].members
@@ -121,19 +149,11 @@ export class Left extends React.Component<connected_p, ClassState> {
 
         // Ojo... is this necessary ?, do I need to put in the state befor hand ??
         this.props.getAllContactsList(this.props.loggedUser).then(
-
             (response: any) => {
-
-                let contactAllinfo = response.data
-
-                let conversationId_Username = contactAllinfo.map((obj: { conversationId: string, username: string }) => ({ conversationId: obj.conversationId, user_name: obj.username }));
-
-                this.props.socket.emit('addconversations', conversationId_Username);
-
-                // this magic is for filling the arrays of styles for the buttons
+                //this magic is for filling the arrays of styles for the buttons
                 this.setState({ contacts: response.data }, () => {
 
-                    this.setState({ cboot: Array.from({ length: this.state.contacts.length }, (v, k) => "btn btn-default") });
+                    this.setState({ display: Array.from({ length: this.state.contacts.length }, (v, k) => "none") });
 
                 })
             }
@@ -156,8 +176,8 @@ export class Left extends React.Component<connected_p, ClassState> {
 
                         <div key={idx} >
                             <div>
-                                {/* hack to have the ability to manage the active chat button */}
-                                <button onClick={this.switchToChat(idx + 1)} /*style={{ display: this.state.display[idx] }} className="btn btn-default"*/ className={this.state.cboot[idx]} id={d.conversationId} key={d.contact.concat("b")} >{li_value}</button>
+                                <button onClick={this.handleChat(idx)} className="btn btn-default" id={d.conversationId} key={d.contact}  >{li_value}</button>
+                                <button onClick={this.switchToChat} className="btn btn-success" id={d.conversationId} key={d.contact.concat("b")} style={{ display: this.state.display[idx] }} >{li_value}</button>
 
                             </div>
                         </div>
@@ -169,12 +189,9 @@ export class Left extends React.Component<connected_p, ClassState> {
 
                 {this.state.groupConversationId ?
                     <div>
-                        <button onClick={this.switchToChat(0)}  /*style={{ display: this.state.displayGroup }} className="btn btn-default" */ className={this.state.cbootgroup} id={this.state.groupConversationId} key={this.state.groupConversationId.concat("b")} data-toggle="tooltip" data-placement="top" title={this.allMembers(this.state.members)}>
-                        <FormattedMessage
-                            id="Left.Group"
-                            defaultMessage="dashboard"
-                        />
-                        </button>
+
+                        <button onClick={this.handleGroup} className="btn btn-default" id={this.state.groupConversationId} key={this.state.groupConversationId} data-toggle="tooltip" data-placement="top" title={this.allMembers(this.state.members)} >Grupo</button>
+                        <button onClick={this.switchToChat} className="btn btn-success" id={this.state.groupConversationId} key={this.state.groupConversationId.concat("b")} data-toggle="tooltip" data-placement="top" style={{ display: this.state.displayGroup }} title={this.allMembers(this.state.members)}>Grupo</button>
 
                     </div>
                     :
@@ -203,16 +220,6 @@ type m2p = {
     uiuserName: string
 }
 
-// type d2p = {
-//     getgroupsIds: any
-//     getAllContactsList: (userIdTerm: string) => (any)
-//     getNames: (arrayOfIds: string) => (any)
-//     setRoom: (roomId: string) => (any)
-//     setChatsNumber: () => (any)
-//     filter_from_history: (conversationId: string) => (any)
-//     clear_message_window: () => (any)
-// }
-
 type d2p = {
     getgroupsIds: any
     getAllContactsList: (userIdTerm: string) => (any)
@@ -231,16 +238,16 @@ type connected_p = m2p & d2p & own_p
 
 const mapStateToProps = (state: any) => {
     return {
-        contacts: state.chatApp.allContactsInState,
-        loggedUser: state.chatApp.idLoggedUser,
-        nameLoggedUser: state.chatApp.nameLoggedUser,
-        roomId: state.chatApp.roomId,
+        contacts: state.allContactsInState,
+        loggedUser: state.idLoggedUser,
+        nameLoggedUser: state.nameLoggedUser,
+        roomId: state.roomId,
 
         //properties of the recently added contact (it already is in Mongo)
-        uiUserID: state.chatApp.userIdContactState,
-        uiuserName: state.chatApp.userNameContactState,
-        uicontactId: state.chatApp.contactIdState,
-        uicontactName: state.chatApp.contactNameState
+        uiUserID: state.userIdContactState,
+        uiuserName: state.userNameContactState,
+        uicontactId: state.contactIdState,
+        uicontactName: state.contactNameState
 
 
     };
@@ -250,7 +257,6 @@ import axios from "axios"
 
 const mapDispatchToProps = (dispatch: Function) => {
     return {
-
         getNames: (arrayOfIds: string) => axios.post("/api/users/getnames/", { arrayOfIds }),
         getgroupsIds: (userId: string) => axios.post("/api/users/getgroups/", { userId: userId }),
         getAllContactsList: (userIdTerm: string) => axios.post("/api/users/contactlist/", { userIdParam: userIdTerm }),
@@ -258,14 +264,8 @@ const mapDispatchToProps = (dispatch: Function) => {
         filter_from_history: (switchtoconversationId: string) => dispatch(actions.filter( switchtoconversationId )),
 
 
-        // getNames: (arrayOfIds: string) => axios.post("/api/users/getnames/", { arrayOfIds }),
-        // getgroupsIds: (userId: string) => axios.post("/api/users/getgroups/", { userId: userId }),
-        // getAllContactsList: (userIdTerm: string) => axios.post("/api/users/contactlist/", { userIdParam: userIdTerm }),
-        // setRoom: (roomId: string) => dispatch({ type: "SET_ROOMID", payload: { roomId } }),
-        // setChatsNumber: () => dispatch({ type: "SET_CHATNUMBER" }),
-        // filter_from_history: (switchtoconversationId: string) => dispatch({ type: "FILTER", payload: { switchtoconversationId } }),
-        // clear_message_window: () => dispatch({ type: "CLEAR_CHATWINDOW" }),
-        //  displayAllContacts: (allUsers: Array<{ _id: string, username: string, selected: boolean }>) => dispatch({ type: "ADD_USERS", payload: { allUsers } })
+        /*filter_from_history: (switchtoconversationId: string) => dispatch(actions.filter( switchtoconversationId ) /*{ type: "FILTER", payload: { switchtoconversationId } }*/
+
     }
 }
 

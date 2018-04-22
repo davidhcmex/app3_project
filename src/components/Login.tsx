@@ -11,7 +11,7 @@ interface d2p {
 
 
 
-export class Login extends React.Component<RouteComponentProps<{}> & d2p, {}> {
+export class Login extends React.Component<RouteComponentProps<{}> & d2p & s2p, {}> {
 
   //export class Login extends React.Component<d2p, {}> {
 
@@ -34,7 +34,7 @@ export class Login extends React.Component<RouteComponentProps<{}> & d2p, {}> {
         <div>
           <div className="row">
             <div className="col-md-4 col-md-offset-4">
-              <LoginForm history={this.props.history} />
+              <LoginForm />
             </div>
           </div>
           <a href="/register" className="btn btn-default" role="button">
@@ -54,7 +54,7 @@ export class Login extends React.Component<RouteComponentProps<{}> & d2p, {}> {
           </button>
 
           <div className="dropdown-menu" aria-labelledby="dropdownMenu2" >
-            <LangForm onSubmit={this.showResults} />
+            <LangForm onSubmit={this.showResults}  />
           </div>
 
         </div>
@@ -70,5 +70,16 @@ const mapDispatchToProps = (dispatch: Function) => {
   }
 }
 
-export default connect<{}, d2p, {}>(null, mapDispatchToProps)(Login)
+const mapStateToProps = (state: any) => {
+  return {
+    getLang: state.chatApp.lang
+  }
+}
+
+interface s2p {
+  getLang: string
+}
+
+
+export default connect<s2p, d2p, {}>(mapStateToProps, mapDispatchToProps)(Login)
 

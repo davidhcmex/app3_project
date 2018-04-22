@@ -37,6 +37,8 @@ ReactDOM.render(
 );
 registerServiceWorker();
 
+export default store
+
 //stores needs root reducer
 //reducer takes state, action and returns new state 
 //(as second parameter to store we need initial state but we dont have

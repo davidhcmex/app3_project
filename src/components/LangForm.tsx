@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Field, reduxForm } from 'redux-form';
 
-const LangForm = (props: any) => {
+const LangForm = (props:any) => {
   const { handleSubmit} = props;
   return (
     <form onSubmit={handleSubmit} className="form-group">
@@ -10,7 +10,7 @@ const LangForm = (props: any) => {
         <label><strong>Language</strong></label>
         <div>
           <label className="control-label">
-            <Field name="lang" component="input" type="radio" value="es-ES" className="form-control" />
+            <Field   name="lang" component="input" type="radio" value="es-ES" className="form-control"/>
             Español
           </label>
           < br />

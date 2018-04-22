@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { connect } from "react-redux"
 import * as moment from "moment"
+import * as actions from '../reducers/actions';
 
 
 import 'moment/locale/es'  // without this line it didn't work
@@ -244,14 +245,30 @@ interface d2p {
 
 import axios from "axios"
 
+// const mapDispatchToProps = (dispatch: Function) => {
+//     return {
+//         getNames: (arrayOfMessages: Array<{ userId: string, message: string, roomId: string }>) => axios.post("/api/users/getnamesmessages/", { arrayOfMessages }),
+
+//         assignNames: (arrayWithNames: Array<{ userNames: string, message: string, roomId: string }>) => dispatch({ type: "ADD_MSG_WITH_NAMES", payload: { arrayWithNames } }),
+
+//         filter_from_history: (switchtoconversationId: string) => dispatch({ type: "FILTER", payload: { switchtoconversationId } }),
+//         addMessageRedux: (messageObj: { userId: string, message: string, roomId: string, timestamp: string }) => dispatch({ type: "ADD_MSG", payload: { messageObj } }),
+
+//     }
+// }
+
 const mapDispatchToProps = (dispatch: Function) => {
     return {
         getNames: (arrayOfMessages: Array<{ userId: string, message: string, roomId: string }>) => axios.post("/api/users/getnamesmessages/", { arrayOfMessages }),
 
         assignNames: (arrayWithNames: Array<{ userNames: string, message: string, roomId: string }>) => dispatch({ type: "ADD_MSG_WITH_NAMES", payload: { arrayWithNames } }),
 
-        filter_from_history: (switchtoconversationId: string) => dispatch({ type: "FILTER", payload: { switchtoconversationId } }),
-        addMessageRedux: (messageObj: { userId: string, message: string, roomId: string, timestamp: string }) => dispatch({ type: "ADD_MSG", payload: { messageObj } }),
+
+        /*first conversion to action creators and action types*/
+        filter_from_history: (switchtoconversationId: string) => dispatch(actions.filter( switchtoconversationId ) /*{ type: "FILTER", payload: { switchtoconversationId } }*/),
+        //addMessageRedux: (messageObj: { userId: string, message: string, roomId: string }) => dispatch({ type: "ADD_MSG", payload: { messageObj } }),
+
+        addMessageRedux: (messageObj: { userId: string, message: string, roomId: string }) => dispatch(actions.add_msg(messageObj)),
 
     }
 }
