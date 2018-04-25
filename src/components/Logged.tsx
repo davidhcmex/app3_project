@@ -29,7 +29,7 @@ export class Logged extends React.Component<PropsInterface & p, StateInterface> 
             prevLogon: [],
             logon: []
 
-            // selectedUsers: [{ _id: "", username: "" }],
+
         }
     }
 
@@ -49,8 +49,7 @@ export class Logged extends React.Component<PropsInterface & p, StateInterface> 
             this.setState({ prevLogon: this.state.logon },
                 () => this.setState({ logon: [...this.state.prevLogon, data] }
                 ))
-            //this.setState((state) => ({ logon: [...this.state.logon, data] }))
-            //this.setState({ logon: [...this.state.logon, data] })
+    
         });
 
         this.props.socket.on('logoff', (id: any) => {
@@ -69,16 +68,12 @@ export class Logged extends React.Component<PropsInterface & p, StateInterface> 
             }
 
 
-         //   console.log("logging off logon original")
-         //   console.log(this.state.logon)
-
-            // console.log("props socket id")
-            // console.log(this.props.socket.id)
+   
             const index2 = this.state.logon.findIndex(obj => obj.socketID === id);
-           // console.log("index2", index2, "value", this.state.logon[index2].username )
+       
 
             if (index2 != -1) {
-               // console.log("deleting from logon")
+              
                 aux = this.state.logon.filter((elem)=>elem.username != this.state.logon[index2].username)
                 this.setState({ logon: aux }, () => (console.log(this.state.logon)));
 

@@ -60,9 +60,7 @@ export class Chat extends React.Component<PropsInterface & p & d2p, stateInterfa
         // IN DISPLAY <=
 
         this.props.socket.on('broadcastmessage', (data: any) => {
-            console.log("broadcastmessage has been received in chat component to be displayed ")
 
-            console.log(data)
             // important !
             if (this.props.userId != data.userId)
             // store in redux of the incoming message
@@ -98,17 +96,8 @@ export class Chat extends React.Component<PropsInterface & p & d2p, stateInterfa
 
 
         let localTimestamp = moment().format("LL, LTS").toString()
-        console.log(localTimestamp)
+
         this.props.socket.emit("messagetoroom", { userId: this.props.userId, username: this.props.username, message: this["message"].value, roomId: this.props.roomIdrdx, timestamp: localTimestamp })
-
-        //store in redux of the local message
-
-        var d = new Date();
-        var local_date = d.toLocaleDateString();
-        var local_time = d.toLocaleTimeString();
-
-        console.log("local date", local_date)
-        console.log("local time", local_time)
         this.props.addMessageRedux({ userId: this.props.userId, username: this.props.username, message: this["message"].value, roomId: this.props.roomIdrdx, timestamp: localTimestamp })
         this.props.filter_from_history(this.props.roomIdrdx)
 
@@ -116,15 +105,11 @@ export class Chat extends React.Component<PropsInterface & p & d2p, stateInterfa
 
     render() {
 
-        console.log("coonversationid", this.props.filterconversationId)
-        console.log(moment().format("LL, LTS").toString())
-        console.log("all conversations", this.props.all_messages)
+
         let newArray = this.props.all_messages.filter((element) => {
             // for all the messages where the roomId is equal to the id of last pressed button
             return element.roomId == this.props.filterconversationId
         });
-
-
         return (
 
             <div className="container" >
@@ -170,36 +155,18 @@ export class Chat extends React.Component<PropsInterface & p & d2p, stateInterfa
                                     <br />
                                 </div>
                                 <label className="control-label">
-                                <FormattedMessage
-                                            id="chatSimple.MessagesFlow"
-                                            defaultMessage="dashboard"
-                                        />
+                                    <FormattedMessage
+                                        id="chatSimple.MessagesFlow"
+                                        defaultMessage="dashboard"
+                                    />
                                 </label>
                                 <div className="card">
-
                                     <div id="messages" className="card-block" style={{ height: "300px" }}>
-                                        {/* {this.state.the_messages.map((d, idx) => {
-                                                    return (<p key={idx}>{d.userId}{d.message}</p>)
-                                                })} */}
-
                                         {newArray.map((d, idx) => {
                                             return (<p key={idx}><strong>{d.username}</strong>,({d.timestamp}):&nbsp;&nbsp;&nbsp;{d.message}</p>)
                                         })}
-
-                                        {/* {(this.props.arrayWithNames !== undefined) ?
-                                                    this.props.arrayWithNames.map((d, idx) => {
-                                                        return (<p key={idx}><strong>{d.userName}:</strong>&nbsp;&nbsp;&nbsp;{d.message}</p>)
-                                                    })
-                                                    :
-
-                                                    <br /> */}
-
-
-
-
                                     </div>
                                 </div>
-
                             </div>
                         </form>
                     </div>
@@ -238,40 +205,17 @@ interface d2p {
     filter_from_history: (conversationId: string) => (any),
     getNames: (arrayOfIds: Array<{ userId: string, message: string, roomId: string }>) => (any),
     assignNames: (arrayWithNames: Array<{ userNames: string, message: string, roomId: string }>) => (any)
-
-
-
 }
 
 import axios from "axios"
 
-// const mapDispatchToProps = (dispatch: Function) => {
-//     return {
-//         getNames: (arrayOfMessages: Array<{ userId: string, message: string, roomId: string }>) => axios.post("/api/users/getnamesmessages/", { arrayOfMessages }),
-
-//         assignNames: (arrayWithNames: Array<{ userNames: string, message: string, roomId: string }>) => dispatch({ type: "ADD_MSG_WITH_NAMES", payload: { arrayWithNames } }),
-
-//         filter_from_history: (switchtoconversationId: string) => dispatch({ type: "FILTER", payload: { switchtoconversationId } }),
-//         addMessageRedux: (messageObj: { userId: string, message: string, roomId: string, timestamp: string }) => dispatch({ type: "ADD_MSG", payload: { messageObj } }),
-
-//     }
-// }
-
 const mapDispatchToProps = (dispatch: Function) => {
     return {
         getNames: (arrayOfMessages: Array<{ userId: string, message: string, roomId: string }>) => axios.post("/api/users/getnamesmessages/", { arrayOfMessages }),
-
-        assignNames: (arrayWithNames: Array<{ userNames: string, message: string, roomId: string }>) => dispatch({ type: "ADD_MSG_WITH_NAMES", payload: { arrayWithNames } }),
-
-
-        /*first conversion to action creators and action types*/
-        filter_from_history: (switchtoconversationId: string) => dispatch(actions.filter( switchtoconversationId ) /*{ type: "FILTER", payload: { switchtoconversationId } }*/),
-        //addMessageRedux: (messageObj: { userId: string, message: string, roomId: string }) => dispatch({ type: "ADD_MSG", payload: { messageObj } }),
-
-        addMessageRedux: (messageObj: { userId: string, message: string, roomId: string }) => dispatch(actions.add_msg(messageObj)),
-
+        assignNames: (arrayWithNames: Array<{ userNames: string, message: string, roomId: string }>) => dispatch(actions.addMsgsWithNames(arrayWithNames)),
+        filter_from_history: (switchtoconversationId: string) => dispatch(actions.filter(switchtoconversationId)),
+        addMessageRedux: (messageObj: { userId: string, message: string, roomId: string }) => dispatch(actions.add_msg(messageObj))
     }
 }
 
 export default connect<PropsInterface, d2p, owned>(mapStateToProps, mapDispatchToProps)(Chat)
-//export default connect(null, mapDispatchToProps)(Chat)

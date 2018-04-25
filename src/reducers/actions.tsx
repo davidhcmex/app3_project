@@ -1,3 +1,4 @@
+export const SET_LANG = 'SET_LANG';
 export const ADD_MSG_WITH_NAMES = 'ADD_MSG_WITH_NAMES';
 export const FILTER = 'FILTER';    /***** ya (dos veces en chatsimple y left) */
 export const UNSETFILTER = 'UNSETFILTER'; /***** ya  en right */
@@ -12,6 +13,23 @@ export const ADD_CONTACTS = 'ADD_CONTACTS';
 export const ADD_USERUID = 'ADD_USERUID'; /***** ya  en right */
 export const UNSET_CONTACTS = 'UNSET_CONTACTS'; /***** ya  en right */
 export const SET_ROOMID = 'SET_ROOMID'; /***** ya  en left */
+
+
+export const addMsgsWithNames = (arrayWithNames:Array<{userNames: string, message: string, roomId: string }>) => {
+    return {
+        type: ADD_MSG_WITH_NAMES,
+        payload: {arrayWithNames}
+    };
+};
+
+
+export const setLang = (Lang:string) => {
+
+    return {
+        type: SET_LANG,
+        payload: {Lang}
+    };
+};
 
 export const filter = (switchtoconversationId:string) => {
     return {

@@ -1,18 +1,13 @@
 import * as React from "react";
-//import axios from "axios"
+
 import { connect } from "react-redux"
-//import { login } from "./Thunks/authThunk"
-//import setAuthorizationToken from '../utils/setAuthorizationToken';
-//import * as jwt from "jsonwebtoken";
+
 import axios from "axios";
 
 import { FormattedMessage } from 'react-intl';
 import { Redirect } from "react-router-dom"
 import * as actions from '../reducers/actions';
 
-
-//Here we will use redux to use  an action that will 
-//perform the post method (in register we did not use it)
 
 interface StateInterface {
     username: string,
@@ -198,28 +193,14 @@ export class LoginForm extends React.Component<{ login: any, setUserId: any }, E
     }
 }
 
-
-
-// const mapDispatchToProps = (dispatch: Function) => {
-//     return {
-//         login: (data: { username: string, password: string }) => axios.post("/api/users/login/", { username: data.username, password: data.password }),
-//         setUserId: (id: string, username: string) => dispatch({ type: "SET_USER_ID", payload: { username, id } }),
-       
-//     }
-// }
-
 const mapDispatchToProps = (dispatch: Function) => {
     return {
         login: (data: { username: string, password: string }) => axios.post("/api/users/login/", { username: data.username, password: data.password }),
-
         setUserId: (id: string, username: string) => dispatch(actions.set_user_id(id, username))
 
 
     }
 }
-
-
-//addAllContacts: (allUsers: Array<{ _id: string, username: string, selected: boolean }>) => dispatch({ type: "ADD_CONTACTS", payload: { allUsers } })
 
 export default connect<{}, {}, {}>(null, mapDispatchToProps)(LoginForm)
 

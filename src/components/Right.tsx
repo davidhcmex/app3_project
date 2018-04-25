@@ -1,5 +1,4 @@
 import * as React from 'react';
-//import { userlist } from "./Thunks/userlistThunk"
 import { connect } from "react-redux"
 import { FormattedMessage } from 'react-intl';
 import * as actions from '../reducers/actions';
@@ -9,7 +8,7 @@ import * as actions from '../reducers/actions';
 interface StateInterface {
 
     allUsers: Array<{ _id: string, username: string, selected: boolean }>
-    //selectedUsers: Array<{ _id: string, username: string }>
+
     searchTerm: string
 
 }
@@ -221,35 +220,9 @@ export class Right extends React.Component<p & d & owned, StateInterface>{
     }
 }
 
-// return (dispatch:Function) => {
-//     return socket.emit("input", {name, message})
-// }
+
 import axios from "axios"
 
-// const mapDispatchToProps = (dispatch: Function) => {
-//     return {
-
-//         userlist: (searchTerm: string) => axios.post("/api/users/userlist/", { searchParam: searchTerm }),
-//         addContactDB: (userId: string, userName: string, contactId: string, contactName: string) => axios.post("/api/users/addconversation/", { userId, userName, contactId, contactName })
-//             .then((response: any) => {
-//                 if (response.data.ok == "ok") {
-//                     return ("success")
-//                 }
-//                 else {
-//                     return ("failure")
-//                 }
-//             }),
-
-//         removeContactDB: (userId: string, contactId: string) => axios.post("/api/users/add/", { userId, contactId }),
-//         addAllContactsToChoose: (allUsers: Array<{ _id: string, username: string, selected: boolean }>) => dispatch({ type: "ADD_USERS", payload: { allUsers } }),
-//         unsetUserId: () => dispatch({ type: "UNSET_USER_ID" }),
-//         unsetContacts: () => dispatch({ type: "UNSET_CONTACTS" }),
-//         unsetChatshistory: () => dispatch({ type: "UNSET_CHATHISTORY" }),
-//         unsetRoomId: () => dispatch({ type: "UNSET_ROOMID" }),
-//         unsetfilterConversationId: () => ({ type: "UNSETFILTER" }),
-//         updateContactsUI: (userId: string, usernamec: string, contactId: string, contactName: string) => dispatch({ type: "ADD_USERUID", payload: { userId, usernamec, contactId, contactName } })
-//     }
-// }
 
 const mapDispatchToProps = (dispatch: Function) => {
     return {
@@ -266,21 +239,20 @@ const mapDispatchToProps = (dispatch: Function) => {
             }),
 
         removeContactDB: (userId: string, contactId: string) => axios.post("/api/users/add/", { userId, contactId }),
-        //addAllContactsToChoose: (allUsers: Array<{ _id: string, username: string, selected: boolean }>) => dispatch({ type: "ADD_USERS", payload: { allUsers } }),
+  
         addAllContactsToChoose: (allUsers: Array<{ _id: string, username: string, selected: boolean }>) => dispatch(actions.add_users(allUsers)),
         unsetUserId: () => dispatch(actions.unsetuserid()),
-        //unsetUserId: () => dispatch({ type: "UNSET_USER_ID" }),
+      
         unsetContacts: () => dispatch(actions.unsetcontacts()),
-      //  unsetContacts: () => dispatch({ type: "UNSET_CONTACTS" }),
+    
         unsetChatshistory: () => dispatch(actions.unsetchathistory()),
-        // unsetChatshistory: () => dispatch({ type: "UNSET_CHATHISTORY" }),
+      
         unsetRoomId: () => dispatch(actions.unset_roomid()),
-        //unsetRoomId: () => dispatch({ type: "UNSET_ROOMID" }),
+
         unsetfilterConversationId: () => dispatch(actions.unsetfilter()),
-        // unsetfilterConversationId: () => ({type:"UNSETFILTER"}),
+       
         updateContactsUI: (userId: string, usernamec: string, contactId: string, contactName: string) => dispatch(actions.add_useruid(userId, usernamec, contactId, contactName))
-     //   updateContactsUI: (userId: string, usernamec: string, contactId: string, contactName: string) => dispatch({ type: "ADD_USERUID", payload: { userId, usernamec, contactId, contactName } })
-        /*filter_from_history: (switchtoconversationId: string) => dispatch(actions.filter( switchtoconversationId ) /*{ type: "FILTER", payload: { switchtoconversationId } }*/
+    
     }
 }
 

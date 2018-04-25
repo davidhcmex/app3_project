@@ -4,9 +4,10 @@ import LangForm from './LangForm';
 import { RouteComponentProps } from "react-router-dom";
 import { connect } from "react-redux"
 import { FormattedMessage } from 'react-intl';
+import * as actions from '../reducers/actions';
 
 interface d2p {
-  setLang: (values: { lang: string }) => (any),
+  setLang: (lang: string ) => (any),
 }
 
 
@@ -23,8 +24,10 @@ export class Login extends React.Component<RouteComponentProps<{}> & d2p & s2p, 
   }
 
   showResults(values: any) {
-    console.log(this.props.setLang)
-    this.props.setLang(values)
+    console.log("gere in lang");
+    
+    console.log(values.lang)
+    this.props.setLang(values.lang)
   }
 
   render() {
@@ -66,7 +69,8 @@ export class Login extends React.Component<RouteComponentProps<{}> & d2p & s2p, 
 
 const mapDispatchToProps = (dispatch: Function) => {
   return {
-    setLang: (values: { lang: string }) => dispatch({ type: "SET_LANG", payload: { values } }),
+    //setLang: (values: { lang: string }) => dispatch({ type: "SET_LANG", payload: { values } }),
+    setLang: (lang: string ) => dispatch(actions.setLang( lang ) ),
   }
 }
 

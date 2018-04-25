@@ -182,11 +182,7 @@ export class Left extends React.Component<connected_p, ClassState> {
                 }
 
 
-                {/* {this.props.uiUserID ?
-                    <button className="btn btn-info" key={this.props.uiUserID.concat("@@", this.props.uicontactId)} >{this.props.uicontactName}</button>
-                    :
-                    <br />
-                } */}
+    
             </div >
         );
     }
@@ -203,15 +199,6 @@ type m2p = {
     uiuserName: string
 }
 
-// type d2p = {
-//     getgroupsIds: any
-//     getAllContactsList: (userIdTerm: string) => (any)
-//     getNames: (arrayOfIds: string) => (any)
-//     setRoom: (roomId: string) => (any)
-//     setChatsNumber: () => (any)
-//     filter_from_history: (conversationId: string) => (any)
-//     clear_message_window: () => (any)
-// }
 
 type d2p = {
     getgroupsIds: any
@@ -257,15 +244,6 @@ const mapDispatchToProps = (dispatch: Function) => {
         setRoom: (roomId: string) => dispatch(actions.set_roomid(roomId)),
         filter_from_history: (switchtoconversationId: string) => dispatch(actions.filter( switchtoconversationId )),
 
-
-        // getNames: (arrayOfIds: string) => axios.post("/api/users/getnames/", { arrayOfIds }),
-        // getgroupsIds: (userId: string) => axios.post("/api/users/getgroups/", { userId: userId }),
-        // getAllContactsList: (userIdTerm: string) => axios.post("/api/users/contactlist/", { userIdParam: userIdTerm }),
-        // setRoom: (roomId: string) => dispatch({ type: "SET_ROOMID", payload: { roomId } }),
-        // setChatsNumber: () => dispatch({ type: "SET_CHATNUMBER" }),
-        // filter_from_history: (switchtoconversationId: string) => dispatch({ type: "FILTER", payload: { switchtoconversationId } }),
-        // clear_message_window: () => dispatch({ type: "CLEAR_CHATWINDOW" }),
-        //  displayAllContacts: (allUsers: Array<{ _id: string, username: string, selected: boolean }>) => dispatch({ type: "ADD_USERS", payload: { allUsers } })
     }
 }
 

@@ -5,7 +5,7 @@ interface stateInterface {
     allUsersInState: Array<{ _id: string, username: string, selected: boolean }>
     idLoggedUser: string,
     allContactsInState: Array<{ _id: string, userId: string, contactId: string }>,
-    messages:Array<{userId:string, message: string, roomId:string }>
+    messages: Array<{ userId: string, message: string, roomId: string }>
 
 
     userId: string,
@@ -13,22 +13,22 @@ interface stateInterface {
     contactId: string,
     contactName: string,
     numChats: number,
-    filterconversationId:string,
-    lang:string
+    filterconversationId: string,
+    lang: string
 }
 
 var initialState: stateInterface = {
     allUsersInState: [],
     idLoggedUser: "",
     allContactsInState: [],
-    messages:[],
+    messages: [],
 
     userId: "",
     usernamec: "",
     contactId: "",
     contactName: "",
-    filterconversationId:"",
-    lang:"en-US",
+    filterconversationId: "",
+    lang: "en-US",
     numChats: 0
 }
 
@@ -39,15 +39,15 @@ interface payloadInterface {
         username: string,
         allUsers: Array<{ _id: string, username: string, selected: boolean }>
         allContacts: Array<{ _id: string, userId: string, contactId: string }>
-        messageObj: { userId:string, message: string, roomId:string, timestamp:string}
+        messageObj: { userId: string, message: string, roomId: string, timestamp: string }
         userId: string
         usernamec: string
         contactId: string,
         contactName: string,
         roomId: string,
-        switchtoconversationId:string,
-        values:{lang:string}
-        arrayWithNames: Array<{ userName:string, message: string, roomId:string}>
+        switchtoconversationId: string,
+        Lang: string 
+        arrayWithNames: Array<{ userName: string, message: string, roomId: string }>
     }
 }
 
@@ -95,7 +95,7 @@ interface payloadInterface {
 //         }
 //     }
 
-    
+
 //     if (action.type === 'UNSET_CHATHISTORY') {
 //         return {
 //             ...state,
@@ -125,8 +125,8 @@ interface payloadInterface {
 //             messages: [...state.messages, action.payload.messageObj]
 //         }
 
-       
-        
+
+
 //     }
 
 //     if (action.type === 'ADD_USERS') {
@@ -201,6 +201,15 @@ interface payloadInterface {
 
 const reducer = (state = initialState, action: payloadInterface) => {
 
+    if (action.type === actionTypes.SET_LANG) {
+        return {
+
+            // assignNames: (arrayWithNames: Array<{ userNames: string, message: string, roomId: string }>) 
+            ...state,
+            lang: action.payload.Lang
+        }
+    }
+
     if (action.type === actionTypes.ADD_MSG_WITH_NAMES) {
         return {
 
@@ -232,7 +241,7 @@ const reducer = (state = initialState, action: payloadInterface) => {
         }
     }
 
-    
+
     if (action.type === actionTypes.UNSET_CHATHISTORY) {
         return {
             ...state,
@@ -247,8 +256,8 @@ const reducer = (state = initialState, action: payloadInterface) => {
             messages: [...state.messages, action.payload.messageObj]
         }
 
-       
-        
+
+
     }
 
     if (action.type === actionTypes.ADD_USERS) {
